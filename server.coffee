@@ -49,21 +49,26 @@ contentsDir = "#{rootDir}contents#{path.sep}"
 
 readComicsPage = (comic, page, cb) ->
   fullpath = "#{contentsDir}#{comic.path}"
-  console.log "Going to open page ##{page} in #{fullpath}"
-  if comic.type is 'rarfile'
-    tool = new RarFile fullpath
-    func = tool.readFile
-  else
-    tool = new ZipFile fullpath
-    func = tool.readFileAsync
-  if comic.type is 'rarfile'
-    func comic.pages[page], (err, data) ->
-      readRarPages += 1
-      cb err, data
-  else
-    func comic.pages[page], (data) ->
-      readZipPages += 1
-      cb null, data 
+  try
+    switch comic.type
+      when 'rarfile'
+        tool = new RarFile fullpath
+        func = tool.readFile
+        func comic.pages[page], (err, data) ->
+          readRarPages += 1
+          cb err, data
+      when 'zipfile'
+        tool = new ZipFile fullpath
+        func = tool.readFileAsync
+        func comic.pages[page], (data) ->
+          readZipPages += 1
+          cb null, data
+      when 'directory'
+        cb new Error("Can't read pages from a directory."), null 
+      else
+        cb new Error("Tried to read an unknown source"), null
+  catch e
+    cb e, null
 
 readRarFile = (comic, fullpath, cb) ->
   rf = new RarFile fullpath
@@ -140,17 +145,26 @@ router.get "/page", (req, res) ->
     at = unescape(req.get.at).trim()
     page = parseInt req.get.page
     getItemAt at, (err, comic) ->
-      throw err unless not err
+      if err
+        res.writeHead 500, "ContenType": "text/plain"
+        return res.end err.toString()
       readComicsPage comic, page, (err, data) ->
-        throw err unless not err
+        if err
+          res.writeHead 500, "ContenType": "text/plain"
+          return res.end err.toString()
         if data.constructor.name is 'String'
           buffer = new Buffer(data, 'binary')
         else
           buffer = data
         if req.get.format is 'string'
-          buffer = escape(buffer.toString('binary'))  
-        res.write buffer
-        res.end()      
+          buffer = escape(buffer.toString('binary'))
+        if buffer.length    
+          res.write buffer
+          res.end()
+        else
+          #logo = fs.createReadStream "#{__dirfile}#{path.sep}public#{path.sep}img#{path.sep}supermanlogoactual.jpg"
+          logo = fs.createReadStream "./public/img/supermanlogoactual.jpg"
+          logo.pipe res
   catch err
     res.writeHead 500, "ContenType": "text/plain"
     res.end err.toString()
