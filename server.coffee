@@ -13,7 +13,7 @@ Router = require 'node-simple-router'
 gm = require 'gm'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
- 
+isRarFile = require('rarfile').isRarFile 
 
 #
 #End of requires
@@ -68,12 +68,12 @@ readComicsPage = (comic, page, cb) ->
 readRarFile = (comic, fullpath, cb) ->
   rf = new RarFile fullpath
   rf.on 'ready', ->
-    comic.pages = (f for f in rf.names)
+    comic.pages = (f for f in rf.names when path.extname(f).toLowerCase() in ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tiff']).sort()
     cb null, comic
   
 readZipFile = (comic, fullpath, cb) ->
   zf = new ZipFile fullpath
-  comic.pages = (n.name for n in zf.getEntries())
+  comic.pages = (n.name for n in zf.getEntries() when path.extname(n.name).toLowerCase() in ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tiff']).sort()
   cb null, comic
   
 getItemAt = (at, cb) ->
@@ -86,8 +86,12 @@ getComicAt = (at, fullpath, cb) ->
   comic = name: path.basename(at.trim()), path: at.trim()
   switch path.extname(at.trim())
     when '.cbr'
-      comic.type = 'rarfile'
-      return readRarFile comic, fullpath, cb
+      if isRarFile(fullpath) 
+        comic.type = 'rarfile'
+        return readRarFile comic, fullpath, cb
+      else
+        comic.type = 'zipfile'
+        return readZipFile comic, fullpath, cb
     when '.cbz'
       comic.type = 'zipfile'
       return readZipFile comic, fullpath, cb
@@ -107,9 +111,12 @@ getDirAt = (at, fullpath, cb) ->
       if stat.isDirectory()
         fullitem.type = "directory"
       else
-        switch path.extname(item)
+        switch path.extname(item).toLowerCase()
           when '.cbr'
-            fullitem.type = 'rarfile'
+            if isRarFile(name)
+              fullitem.type = 'rarfile'
+            else
+              fullitem.type = 'zipfile'
           when '.cbz'
             fullitem.type = 'zipfile'
           else
@@ -154,7 +161,8 @@ router.get "/item", (req, res) ->
     console.log "Requested path: #{at}"
     getItemAt unescape(at), (err, data) ->
       if err
-        throw err
+        res.writeHead 500, "ContentType": "text/plain"
+        res.end err.toString()
       else
         res.writeHead 200, "ContentType": "text/x-json"
         res.end JSON.stringify data
