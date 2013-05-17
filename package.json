@@ -1,0 +1,41 @@
+{
+  "author": "Domingo Ernesto Savoretti",
+  "name": "silver-age-comics",
+  "description": "A tribute to the superhero comics of the fifties and the sixties",
+  "version": "0.1.1",
+  "homepage": "https://github.com/sandy98/silver-age-comics",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/sandy98/silver-age-comics.git"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.2.x"
+  },
+  "scripts": {
+    "start": "brunch w & coffee server 8000"
+  },
+  "dependencies": {
+    "javascript-brunch": "> 1.0 < 1.3",
+    "coffee-script-brunch": "> 1.0 < 1.3",
+    "css-brunch": "> 1.0 < 1.3",
+    "stylus-brunch": "> 1.0 < 1.3",
+    "handlebars-brunch": "> 1.0 < 1.3",
+    "uglify-js-brunch": "> 1.0 < 1.3",
+    "clean-css-brunch": "> 1.0 < 1.3",
+    "rarfile": "~0.1.13",
+    "adm-zip": "~0.4.3",
+    "node-simple-router": "~0.3.4",
+    "gm": "~1.9.1",
+    "when": "~2.1.0"
+  },
+  "devDependencies": {
+    "mocha": "0.14.0",
+    "expect.js": "0.1.2"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "license": "MIT"
+}
