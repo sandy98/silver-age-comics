@@ -20,6 +20,7 @@ module.exports = class Router extends Backbone.Router
 
         contents: =>
           cv = new ContentsView()
+          application.contentsView = cv
           application.vent.trigger 'navigation', {href: "contents", view: cv}
 
 

@@ -1,7 +1,8 @@
 require 'lib/view_helper'
 
 User = require 'models/user'
-
+Item = require 'models/item'
+Items = require 'models/items'
 
 class Application extends Backbone.Marionette.Application
 
@@ -14,7 +15,8 @@ class Application extends Backbone.Marionette.Application
         @dataSource = require './datasource'
 
         @user = new User
-
+        @item = new Item app: @, path: ''
+ 
         @vent.on 'navigation', (where) =>
           console.log "@#{where.href}@"
           if (@user.get 'username') or (not @user.get 'username')
@@ -55,6 +57,13 @@ class Application extends Backbone.Marionette.Application
             Backbone.history.start()
             # Freeze the object
             #Object.freeze? @
+
+        )
+
+
+        @addInitializer((options) =>
+          #@item.fetch()
+          a = 3 + 4
         )
 
         @addInitializer( (options) =>
@@ -75,6 +84,7 @@ class Application extends Backbone.Marionette.Application
             # Instantiate the router
             Router = require 'lib/router'
             @router = new Router()
+
         )
 
         @start()
