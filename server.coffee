@@ -146,12 +146,12 @@ router.get "/page", (req, res) ->
     page = parseInt req.get.page
     getItemAt at, (err, comic) ->
       if err
-        res.writeHead 500, "ContenType": "text/plain"
-        return res.end err.toString()
+        res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+        res.end()
       readComicsPage comic, page, (err, data) ->
         if err
-          res.writeHead 500, "ContenType": "text/plain"
-          return res.end err.toString()
+          res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+          return res.end()
         if data.constructor.name is 'String'
           buffer = new Buffer(data, 'binary')
         else
@@ -163,11 +163,13 @@ router.get "/page", (req, res) ->
           res.end()
         else
           #logo = fs.createReadStream "#{__dirfile}#{path.sep}public#{path.sep}img#{path.sep}supermanlogoactual.jpg"
-          logo = fs.createReadStream "./public/img/supermanlogoactual.jpg"
-          logo.pipe res
+          #logo = fs.createReadStream "./public/img/supermanlogoactual.jpg"
+          #logo.pipe res
+          res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=Request resulted in 0 length page"
+          res.end()
   catch err
-    res.writeHead 500, "ContenType": "text/plain"
-    res.end err.toString()
+    res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+    res.end()
     
 router.get "/item", (req, res) ->
   try
