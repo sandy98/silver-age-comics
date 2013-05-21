@@ -1,30 +1,20 @@
 template = require './templates/contents'
-Item = require 'models/item'
-Items = require 'models/items'
-ItemListView = require 'views/ItemListView'
 app = require 'application'
+ContentsBCView = require './ContentsBCView'
+ContentsMainView = require './ContentsMainView'
 
-module.exports = class ContentsView extends Backbone.Marionette.CompositeView
-	template: template
-	
-	itemViewContainer: "#dir-list"
-	
-	itemView: ItemListView
-	
-	initialize: =>
-	  app.vent.on 'item:selected', (item) =>
-	    app.item = item
-	    @reload()
-	    
-	  @reload()
-	  
-	reload: =>  
-	  @model = app.item
-	  @model.on 'all change', @loadItems
-	  @model.fetch()
-	  
+module.exports = class ContentsView extends Backbone.Marionette.Layout
+  template: template
 
-	loadItems: (evt) =>
-	  @collection = new Items @model.get 'files'
-	  @render()
-  
+  initialize: =>
+    @item = app.item
+    @bcView = new ContentsBCView @item
+    @mainView = new ContentsMainView @item
+
+  onRender: (evt) =>
+    @breadcrumbs.show @bcView
+    @main.show @mainView
+
+  regions:
+    breadcrumbs: '#contents-bc'
+    main: '#contents-main'
