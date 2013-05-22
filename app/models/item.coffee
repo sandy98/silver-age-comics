@@ -1,6 +1,6 @@
-#app = require 'application' #Blows the stack!
+utils = require '../lib/utils'
 
-class Item extends Backbone.Model
+module.exports = class Item extends Backbone.Model
 
     urlRoot: =>
       "item?at=#{@get 'path'}"
@@ -16,12 +16,20 @@ class Item extends Backbone.Model
     isComic: =>
       (@get('type') is 'rarfile') or (@get('type') is 'zipfile')
         
+    splitNames: =>
+      #'splitNames'
+      @get('path').split '/'
+
+    breadcrumbs: =>
+      #'breadcrumbs'
+      utils.breadcrumbs(@splitNames()).map((arr) -> arr.join('/'))
 
     toJSON: =>
       base = _.clone @attributes
       base.isDirectory = @isDirectory()
       base.isComic = @isComic()
-      
+      base.ancestryNames = @splitNames()
+      base.ancestryPaths = @breadcrumbs()
+      base.ancestryObjs = (name: base.ancestryNames[n], path: base.ancestryPaths[n] for n in [0..(base.ancestryNames.length - 1)])
       base
 
-module.exports = Item

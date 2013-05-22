@@ -20,7 +20,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   reload: =>
     @model = app.item
-    @model.on 'all change', @loadItems
+    @model.on 'all', @loadItems
     @model.fetch()
 
 

@@ -27,7 +27,8 @@
     "adm-zip": "~0.4.3",
     "node-simple-router": "~0.3.4",
     "gm": "~1.9.1",
-    "when": "~2.1.0"
+    "when": "~2.1.0",
+    "async": "~0.2.8"
   },
   "devDependencies": {
     "mocha": "0.14.0",

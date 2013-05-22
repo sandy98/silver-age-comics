@@ -1,11 +1,19 @@
-    <div class="span12" style="font-size: xx-small;">
+    <div class="span12" style="font-size: small;">
         <div class="well well-small">
-            <strong>Silver Age Comics Library</strong>&nbsp;
-            {{#if path}}
-              {{ path }}
-            {{else}}
-              /
-            {{/if}}
+            <ul class="breadcrumb">
+            {{#each ancestryObjs}}
+                <li>
+                    <a href="#" data-path="{{ this.path }}">
+                        {{#if this.name }}
+                          {{ this.name }}
+                        {{else }}
+                        <strong>Silver Age Comics Library</strong>
+                        {{/if}}
+                    </a>
+                </li>
+                <span class="divider">/</span>
+            {{/each}}
+            </ul>
         </div>
     </div>
 

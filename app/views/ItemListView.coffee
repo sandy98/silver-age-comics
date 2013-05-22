@@ -11,6 +11,7 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
 	 
 	 
 	onClick: (evt) =>
-          @model.fetch()
-          #bootbox.alert "Going to #{@model.get('path')}"
-          app.vent.trigger "item:selected", @model
+          @model.fetch
+            success: (model, response) =>
+              console.log "Item #{model.get 'name'} successfully retrieved"
+              app.vent.trigger "item:selected", model

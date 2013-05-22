@@ -1,13 +1,16 @@
-utils = {}
+utils =
+  butlast: (li) ->
+    (x for x in li[0...(li.length - 1)])
 
-utils.butlast = (li) ->
-  return [] unless li isnt []
-  return [] unless li.length > 1
-  return li[0...(li.length - 1)]
+  breadcrumbs: (li) ->
 
-utils.bread_crumb = (li) ->
-  return [] unless li isnt []
-  return [li].concat utils.bread_crumb(utils.butlast(li))
+    bc = (li) ->
+      return [] unless li.length isnt 0
+      arr = bc(utils.butlast(li))
+      arr.unshift li
+      arr
+
+    bc(li).reverse()
 
 
 module.exports = utils

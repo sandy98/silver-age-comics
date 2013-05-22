@@ -8,17 +8,29 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
 
   initialize: =>
     app.vent.on 'item:selected', (item) =>
-      app.item = item
-      @reload()
+      @model = item
+      @render()
 
     @reload()
 
   reload: =>
     @model = app.item
-    @model.on 'all change', @loadItems
+    @model.on 'all', @render
     @model.fetch()
 
+  events:
+    'click a': 'onClick'
 
-  loadItems: (evt) =>
-    @collection = new Items @model.get 'files'
-    @render()
+  onClick: (evt) =>
+    evt.preventDefault?()
+    console.log "Clicked on #{$(evt.target).attr('data-path')}"
+    @model = new Item path: $(evt.target).attr('data-path')
+    @model.fetch
+      success: (model, response) =>
+        app.vent.trigger "item:selected", model
+    false
+
+
+  onRender: (evt) =>
+    @$('li:last').addClass('active')
+    @$('span.divider:last').remove()
