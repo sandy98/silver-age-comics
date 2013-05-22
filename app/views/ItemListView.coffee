@@ -14,4 +14,8 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
           @model.fetch
             success: (model, response) =>
               console.log "Item #{model.get 'name'} successfully retrieved"
-              app.vent.trigger "item:selected", model
+              if model.get('type') in ['rarfile', 'zipfile']
+                model.set('currentPage', 0)
+                app.vent.trigger "comics:selected", model
+              else
+                app.vent.trigger "item:selected", model

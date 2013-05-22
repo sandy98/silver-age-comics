@@ -40,6 +40,10 @@ router._404 = (req, res, path) ->
 #Auxiliary functions and definitions
 #
 
+process.on 'uncaughtException', (err) ->
+  console.error(err)
+  console.log("Node NOT Exiting...")
+
 readRarPages = 0
 readZipPages = 0
 
