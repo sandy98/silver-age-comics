@@ -25,5 +25,34 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
 
   loadItems: (evt) =>
-    @collection = new Items @model.get 'files'
+    @fullCollection = new Items @model.get 'files'
+    @collection = @fullCollection.parse()
+    @render()
+
+  onRender: =>
+    @$('.btn').on 'click', @onNavigate
+
+  onNavigate: (evt) =>
+    @[$(evt.target).attr("data-nav")]()
+
+  first: =>
+    @goto 0
+
+  last: =>
+    @goto @fullCollection.maxPage()
+
+  prev: =>
+    @goto @fullCollection.currentPage - 1
+
+  next: =>
+    @goto @fullCollection.currentPage + 1
+
+  goto: (page) =>
+    if page < 0
+      page = 0
+    if page > @fullCollection.maxPage()
+      page = @fullCollection.maxPage()
+
+    @fullCollection.currentPage = page
+    @collection = @fullCollection.parse()
     @render()

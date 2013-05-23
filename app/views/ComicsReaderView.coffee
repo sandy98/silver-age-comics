@@ -21,6 +21,10 @@ module.exports = class UserItemView extends GenericPopupView
     factor = if direction is '+' then 1 else -1
     curr_size = parseInt(@$('#page-show').attr 'width')
     new_size = curr_size + (10 * factor)
+    if new_size > 100
+      new_size = 100
+    if new_size < 10
+      new_size = 10
     @$('#page-show').attr width: "#{new_size}%", height: "#{new_size}%"
 
   onBtnClick: (evt) =>
