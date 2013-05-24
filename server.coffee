@@ -128,7 +128,7 @@ getDirAt = (at, fullpath, cb) ->
       async.series [
         (scb) ->
           #console.log "getDirAt - Step 2b: going to map #{fullpaths.length} direntries to its stats\n" 
-          async.mapSeries(fullpaths, fs.stat, (err, stats) -> console.log "getDirAt - Step 2bb: logged #{stats.length} stats\n"; scb(err, stats))
+          async.mapSeries(fullpaths, fs.stat, (err, stats) -> scb(err, stats))
         (scb) ->
           for item in items
             switch path.extname(item.name).toLowerCase()
