@@ -8,12 +8,14 @@ fs = require 'fs'
 path = require 'path'
 os = require 'os'
 http = require 'http'
-_when = require 'when'
+#_when = require 'when'
+async = require 'async'
 Router = require 'node-simple-router'
 gm = require 'gm'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
 isRarFile = require('rarfile').isRarFile 
+_ = require('underscore')._
 
 #
 #End of requires
@@ -22,6 +24,9 @@ isRarFile = require('rarfile').isRarFile
 #
 #Main objects definitions
 #
+
+img_cache = {}
+MAX_CACHE_SIZE = 100
 
 router = Router(list_dir: false)
 server = http.createServer router
@@ -87,21 +92,21 @@ readZipFile = (comic, fullpath, cb) ->
   
 getItemAt = (at, cb) ->
   fullpath = "#{contentsDir}#{at.trim()}"
-  console.log "Requested full path: #{fullpath}"
-  return getDirAt at, fullpath, cb unless !!(path.extname(fullpath) in ['.cbr', '.cbz'])
+  #console.log "Requested full path: #{fullpath}"
+  return getDirAt at, fullpath, cb unless !!(path.extname(fullpath) in ['.cbr', '.cbz', '.rar', '.zip'])
   getComicAt at, fullpath, cb
   
 getComicAt = (at, fullpath, cb) ->
   comic = name: path.basename(at.trim()), path: at.trim()
   switch path.extname(at.trim())
-    when '.cbr'
+    when ('.cbr' or '.rar')
       if isRarFile(fullpath) 
         comic.type = 'rarfile'
         return readRarFile comic, fullpath, cb
       else
         comic.type = 'zipfile'
         return readZipFile comic, fullpath, cb
-    when '.cbz'
+    when ('.cbz' or '.zip')
       comic.type = 'zipfile'
       return readZipFile comic, fullpath, cb
     else
@@ -110,29 +115,64 @@ getComicAt = (at, fullpath, cb) ->
         
 getDirAt = (at, fullpath, cb) ->
   directory = name: path.basename(at), path: at, type: 'directory'
-  fs.readdir fullpath, (err, data) ->
-    return cb err, null if err
-    objects = []
-    for item in data
-      fullitem = name: item, path: "#{at.trim()}#{path.sep}#{item}"
-      name = "#{fullpath}#{path.sep}#{item}"
-      stat = fs.statSync name
-      if stat.isDirectory()
-        fullitem.type = "directory"
-      else
-        switch path.extname(item).toLowerCase()
-          when '.cbr'
-            if isRarFile(name)
-              fullitem.type = 'rarfile'
-            else
-              fullitem.type = 'zipfile'
-          when '.cbz'
-            fullitem.type = 'zipfile'
-          else
-            fullitem.type = 'unknown'
-      objects.push fullitem
-    directory.files = objects  
-    cb null, directory
+  async.waterfall [
+    (callb) ->
+      fs.readdir fullpath, (err, direntries) ->
+        return callb(err) if err
+        #console.log "getDirAt - Step 1: #{JSON.stringify(direntries)}\n"
+        return callb(null, direntries)
+    (direntries, callb) ->
+      items = (name: item, path: "#{at.trim()}#{path.sep}#{item}" for item in direntries)
+      fullpaths = ("#{fullpath}#{path.sep}#{item}" for item in direntries)
+      #console.log "getDirAt - Step 2a: #{JSON.stringify(items)}\n"
+      async.series [
+        (scb) ->
+          #console.log "getDirAt - Step 2b: going to map #{fullpaths.length} direntries to its stats\n" 
+          async.mapSeries(fullpaths, fs.stat, (err, stats) -> console.log "getDirAt - Step 2bb: logged #{stats.length} stats\n"; scb(err, stats))
+        (scb) ->
+          for item in items
+            switch path.extname(item.name).toLowerCase()
+              when ('.cbr' or '.rar')
+                if isRarFile("#{fullpath}#{path.sep}#{item.name}")
+                  item.type = 'rarfile'
+                else
+                  item.type = 'zipfile'
+              when ('.cbz' or '.zip')
+                item.type = 'zipfile'
+              else
+                item.type = 'unknown'
+            #console.log "getDirAt - Step 2b: #{item.name} is a #{item.type}\n"
+          scb null, items
+      ],
+      (err, collections) ->
+        if err
+          console.log "getDirAt - Step 2bc: ERRORRR #{err.toString()}\n"
+          callb err
+        else
+          #console.log "getDirAt - Step 2bc: got #{collections.length} collections\n"
+          [stats, items] = [collections[0], collections[1]]
+          for n in [0...stats.length]
+            if stats[n].isDirectory()
+              items[n].type = "directory"
+          callb null, items
+        
+    (items, callb) ->
+      async.filterSeries(
+        items
+        (item, callb2) -> callb2(item.type isnt 'unknown')
+        (results) -> 
+          #console.log "getDirAt - Step 3: #{JSON.stringify(results)}\n"
+          callb null, results
+      )
+  ], 
+  (err, results) ->
+     if err
+       console.log "getDirAt - Final Step: ERRORRR #{err.toString()}\n"
+       cb err
+     else
+       #console.log "getDirAt - Final Step: #{JSON.stringify(results)}\n"
+       directory.files = results
+       cb null, directory
 
 
 #
@@ -146,6 +186,13 @@ getDirAt = (at, fullpath, cb) ->
 
 router.get "/page", (req, res) ->
   try
+    #console.log "GET STRINGIFIED #{JSON.stringify req.get}"
+    #console.log "Cache length: #{_.keys(img_cache).length}"
+    if JSON.stringify(req.get) of img_cache
+       buffer = img_cache[JSON.stringify(req.get)]
+       res.write buffer
+       console.log "Written image from cache, which is now #{_.keys(img_cache).length} long".toUpperCase()
+       return res.end()
     at = unescape(req.get.at).trim()
     page = parseInt req.get.page
     getItemAt at, (err, comic) ->
@@ -165,6 +212,11 @@ router.get "/page", (req, res) ->
         if buffer.length    
           res.write buffer
           res.end()
+          if _.keys(img_cache).length >= MAX_CACHE_SIZE
+            console.log "Making room in cache..."
+            delete img_cache[_.keys(img_cache)[0]]
+          img_cache[JSON.stringify(req.get)] = buffer
+          console.log "#{JSON.stringify(req.get)} included in image cache.".toUpperCase()
         else
           #logo = fs.createReadStream "#{__dirfile}#{path.sep}public#{path.sep}img#{path.sep}supermanlogoactual.jpg"
           #logo = fs.createReadStream "./public/img/supermanlogoactual.jpg"
