@@ -7,7 +7,7 @@ module.exports = class Items extends Backbone.Collection
 
   firstPage: 0
   currentPage: 0
-  perPage: 3
+  perPage: 5
 
 	
   toJSON: =>

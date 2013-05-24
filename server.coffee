@@ -25,8 +25,6 @@ _ = require('underscore')._
 #Main objects definitions
 #
 
-img_cache = {}
-MAX_CACHE_SIZE = 100
 
 router = Router(list_dir: false)
 server = http.createServer router
@@ -49,8 +47,12 @@ process.on 'uncaughtException', (err) ->
   console.error(err)
   console.log("Node NOT Exiting...")
 
+MAX_CACHE_SIZE = 100
+
+img_cache = {}
 readRarPages = 0
 readZipPages = 0
+readCachePages = 0
 
 #rootDir = "#{__dirname}#{path.sep}"
 rootDir = "/home/ernesto/Dropbox/programas/amecro/www/silvercomics#{path.sep}"
@@ -93,12 +95,12 @@ readZipFile = (comic, fullpath, cb) ->
 getItemAt = (at, cb) ->
   fullpath = "#{contentsDir}#{at.trim()}"
   #console.log "Requested full path: #{fullpath}"
-  return getDirAt at, fullpath, cb unless !!(path.extname(fullpath) in ['.cbr', '.cbz', '.rar', '.zip'])
+  return getDirAt at, fullpath, cb unless !!(path.extname(fullpath).toLowerCase() in ['.cbr', '.cbz', '.rar', '.zip'])
   getComicAt at, fullpath, cb
   
 getComicAt = (at, fullpath, cb) ->
   comic = name: path.basename(at.trim()), path: at.trim()
-  switch path.extname(at.trim())
+  switch path.extname(at.trim()).toLowerCase()
     when '.cbr', '.rar'
       if isRarFile(fullpath) 
         comic.type = 'rarfile'
@@ -191,6 +193,7 @@ router.get "/page", (req, res) ->
     if JSON.stringify(req.get) of img_cache
        buffer = img_cache[JSON.stringify(req.get)]
        res.write buffer
+       readCachePages += 1
        console.log "Written image from cache, which is now #{_.keys(img_cache).length} long".toUpperCase()
        return res.end()
     at = unescape(req.get.at).trim()
@@ -244,7 +247,10 @@ router.get "/item", (req, res) ->
   
 router.get "/statistics", (req, res) ->
   res.writeHead 200, "ContentType": "text/x-json"
-  res.end JSON.stringify {readRarPages, readZipPages}
+  cacheMax = MAX_CACHE_SIZE
+  cacheUse = _.keys(img_cache).length
+  cacheStats = {cacheUse, cacheMax}  
+  res.end JSON.stringify {readRarPages, readZipPages, readCachePages, cacheStats}
 
 #legionthumb: decorative
 router.get "/legionthumb", (req, res) ->
