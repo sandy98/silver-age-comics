@@ -99,14 +99,14 @@ getItemAt = (at, cb) ->
 getComicAt = (at, fullpath, cb) ->
   comic = name: path.basename(at.trim()), path: at.trim()
   switch path.extname(at.trim())
-    when ('.cbr' or '.rar')
+    when '.cbr', '.rar'
       if isRarFile(fullpath) 
         comic.type = 'rarfile'
         return readRarFile comic, fullpath, cb
       else
         comic.type = 'zipfile'
         return readZipFile comic, fullpath, cb
-    when ('.cbz' or '.zip')
+    when '.cbz', '.zip'
       comic.type = 'zipfile'
       return readZipFile comic, fullpath, cb
     else
@@ -132,12 +132,12 @@ getDirAt = (at, fullpath, cb) ->
         (scb) ->
           for item in items
             switch path.extname(item.name).toLowerCase()
-              when ('.cbr' or '.rar')
+              when '.cbr', '.rar'
                 if isRarFile("#{fullpath}#{path.sep}#{item.name}")
                   item.type = 'rarfile'
                 else
                   item.type = 'zipfile'
-              when ('.cbz' or '.zip')
+              when '.cbz', '.zip'
                 item.type = 'zipfile'
               else
                 item.type = 'unknown'
