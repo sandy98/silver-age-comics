@@ -4,7 +4,7 @@
 #Requires
 #
 
-fs = require 'fs'
+fs = require 'graceful-fs'
 path = require 'path'
 os = require 'os'
 http = require 'http'
@@ -44,9 +44,18 @@ router._404 = (req, res, path) ->
 #
 
 process.on 'uncaughtException', (err) ->
-  console.error(err)
-  console.log("Node NOT Exiting...")
-
+  if err.code is "EMFILE"
+    console.log "Pesky 'Too many files open' strikes again.\nFailure was set after #{readRarPages} read RAR pages."
+    console.log ("=" for x in [0..79]).join ''
+    console.log "STACK TRACE"
+    console.log ("=" for x in [0..79]).join ''
+    console.log err.stack
+    console.log ("=" for x in [0..79]).join ''
+  else
+    console.error("ANOTHER KIND OF UNCAUGHT ERROR: #{err.toString()}")
+    console.log("Node NOT Exiting...")
+  
+USE_CACHE = true
 MAX_CACHE_SIZE = 100
 
 img_cache = {}
@@ -89,7 +98,7 @@ readRarFile = (comic, fullpath, cb) ->
   
 readZipFile = (comic, fullpath, cb) ->
   zf = new ZipFile fullpath
-  comic.pages = (n.name for n in zf.getEntries() when path.extname(n.name).toLowerCase() in ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tiff']).sort()
+  comic.pages = (n.entryName for n in zf.getEntries() when path.extname(n.name).toLowerCase() in ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tiff']).sort()
   cb null, comic
   
 getItemAt = (at, cb) ->
@@ -215,11 +224,12 @@ router.get "/page", (req, res) ->
         if buffer.length    
           res.write buffer
           res.end()
-          if _.keys(img_cache).length >= MAX_CACHE_SIZE
-            console.log "Making room in cache..."
-            delete img_cache[_.keys(img_cache)[0]]
-          img_cache[JSON.stringify(req.get)] = buffer
-          console.log "#{JSON.stringify(req.get)} included in image cache.".toUpperCase()
+          if USE_CACHE
+            if _.keys(img_cache).length >= MAX_CACHE_SIZE
+              console.log "Making room in cache..."
+              delete img_cache[_.keys(img_cache)[0]]
+            img_cache[JSON.stringify(req.get)] = buffer
+            console.log "#{JSON.stringify(req.get)} included in image cache.".toUpperCase()
         else
           #logo = fs.createReadStream "#{__dirfile}#{path.sep}public#{path.sep}img#{path.sep}supermanlogoactual.jpg"
           #logo = fs.createReadStream "./public/img/supermanlogoactual.jpg"

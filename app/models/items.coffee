@@ -19,4 +19,4 @@ module.exports = class Items extends Backbone.Collection
     new Backbone.Collection @toJSON()
 
   maxPage: =>
-    Math.floor(@models.length / @perPage)
+    Math.ceil(@models.length / @perPage) - 1

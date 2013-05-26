@@ -19,3 +19,5 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
                 app.vent.trigger "comics:selected", model
               else
                 app.vent.trigger "item:selected", model
+            error: =>
+              bootbox.alert "Warning. Server is not responding, probably down. ;-("

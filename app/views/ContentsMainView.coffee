@@ -31,6 +31,13 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   onRender: =>
     @$('.btn').on 'click', @onNavigate
+    start = @fullCollection.currentPage * @fullCollection.perPage + 1
+    end = start + @fullCollection.perPage - 1
+    total = @fullCollection.length
+    if end > total
+      end = total
+    console.log start, end, total
+    @$('#page-status').text "#{start} - #{end} of #{total}"
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()
@@ -50,9 +57,11 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
   goto: (page) =>
     if page < 0
       page = 0
-    if page > @fullCollection.maxPage()
-      page = @fullCollection.maxPage()
+    max = @fullCollection.maxPage()
+    if page > max
+      page = max
 
+    return if page is @fullCollection.currentPage
     @fullCollection.currentPage = page
     @collection = @fullCollection.parse()
     @render()

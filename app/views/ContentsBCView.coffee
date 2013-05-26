@@ -28,6 +28,8 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
     @model.fetch
       success: (model, response) =>
         app.vent.trigger "item:selected", model
+      error: =>
+        bootbox.alert "Warning: server is not responding."
     false
 
 
