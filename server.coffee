@@ -273,6 +273,21 @@ router.get "/legionthumb", (req, res) ->
     thumb = thumb.type('grayscale')
   thumb.stream().pipe res
 
+router.get "/thumb/:image/:proportion", (req, res) ->
+  #res.writeHead 200, "ContentType": "image/jpeg"
+  size = req.params.proportion or 100
+  image = req.params.image or 'Superman_Folder.bmp'
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
+  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+
+router.get "/supi_folder", (req, res) ->
+  #res.writeHead 200, "ContentType": "image/jpeg"
+  size = 10
+  #image = 'Superman_Folder.bmp'
+  image = 'superman-1920x1080.jpg'
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
+  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+
 router.get "/hello", (req, res) ->
  res.end 'Hello, World!, Hola, Mundo!'
 

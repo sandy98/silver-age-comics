@@ -26,6 +26,7 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
     #@$("li>a[href='##{@currentRoute}']").parent().addClass 'active'
     @highlight href: @currentRoute
     @$('a[href="#newuser"], a[href="#edituser"]').tooltip placement: 'bottom'
+    #@$('.navbar-inner').after("<img src='img/supes_logo.jpg' width='3%' height='3%' />")
 
   highlight: (where) =>
     @currentRoute = where.href

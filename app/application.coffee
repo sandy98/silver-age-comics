@@ -63,7 +63,8 @@ class Application extends Backbone.Marionette.Application
 
         @addInitializer((options) =>
           #@item.fetch()
-          a = 3 + 4
+          $('#ajax-loader').ajaxStart(-> $('#ajax-loader').show())
+          $('#ajax-loader').ajaxStop(-> $('#ajax-loader').hide())
         )
 
         @addInitializer( (options) =>
