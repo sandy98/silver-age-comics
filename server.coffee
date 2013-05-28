@@ -310,7 +310,7 @@ argv = process.argv.slice 2
 
 
 server.on 'listening', ->
-  addr = server.address() or {address: '0.0.0.0', port: argv[0] or 8000}
+  addr = server.address() or {address: '0.0.0.0', port: argv[0] or 20386}
   router.log "Serving web content at " + addr.address + ":" + addr.port  
 
 process.on "SIGINT", ->
