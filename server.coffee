@@ -273,11 +273,32 @@ router.get "/legionthumb", (req, res) ->
     thumb = thumb.type('grayscale')
   thumb.stream().pipe res
 
+router.get "/thumb", (req, res) ->
+  #res.writeHead 200, "ContentType": "image/jpeg"
+  size =  200
+  image = 'supes_logo_blue_bg.jpg'
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
+  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+
 router.get "/thumb/:image/:proportion", (req, res) ->
   #res.writeHead 200, "ContentType": "image/jpeg"
   size = req.params.proportion or 100
-  image = req.params.image or 'Superman_Folder.bmp'
-  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
+  image = "#{req.params.image}"
+  if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.jpg"
+    image = "#{image}.jpg"
+  else if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.png"
+    image = "#{image}.png"
+  else if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.gif"
+    image = "#{image}.gif"
+  else if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.ico"
+    image = "#{image}.ico"
+  else if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.bmp"
+    image = "#{image}.bmp"
+  else
+    image = 'supes_logo_blue_bg.jpg'
+
+  console.log "Displaying thumb #{image}"
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
   thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
 
 router.get "/supi_folder", (req, res) ->
