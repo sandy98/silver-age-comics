@@ -73,8 +73,13 @@
                 padding: 0;
                 border: 0;
             }
+            .busy {
+                cursor: wait !important;
+            }
         </style>
         <script type="text/javascript" src="javascripts/jquery.js"></script>
+        <script type="text/javascript" src="javascripts/bootstrap.js"></script>
+        <script type="text/javascript" src="javascripts/bootbox.js"></script>
         <script type="text/javascript" src="javascripts/turn.min.js"></script>
         <script type="text/javascript">
           ;var parseQuery = function(query) {
@@ -94,7 +99,7 @@
 
           var showStatus = function(curr, total) {
             //$("#lblCurrent").text("Page " + curr + " / " + total);
-            $('#status-label').text("Page " + (comic.page + 1) + " of " + (comic.pages + 1));
+            $('#status-label').text("Page " + (comic.page + 1) + " of " + (comic.pages));
           }
 
           var setBusy = function(cond) {
@@ -113,22 +118,46 @@
             showStatus();
 	  };
           
+          var zoomPage = function(newZoom) {
+            comic.zoom = newZoom;
+            var zoomStr = "" + comic.zoom + "%";
+            $currentImage.fadeOut();
+            $currentImage.attr({width: zoomStr, height: zoomStr});
+            $currentImage.fadeIn();
+          };
+          
           var onClose = function() {window.close();};
           var onPageFirst = function () {comic.page = 0; showPage();};
           var onPagePrevious = function () {if (comic.page === 0) return; comic.page -= 1; showPage();};
           var onPageNext = function () {if (comic.page === (comic.pages - 1)) return; comic.page += 1; showPage();};
           var onPageLast = function () {comic.page = comic.pages - 1; showPage();};
           
+          var onEnsmall = function() {
+            var curZoom = comic.zoom - 10;
+            if (curZoom < 10)
+              curZoom = 10;
+            if (curZoom !== comic.zoom)
+              zoomPage(curZoom);
+          };
+          
+          var onEnlarge = function() {
+            var curZoom = comic.zoom + 10;
+            if (curZoom > 100)
+              curZoom = 100;
+            if (curZoom !== comic.zoom)
+              zoomPage(curZoom);          
+          };
           
           $(document).ready(function() {
-            $heading = $("#title-heading");
-            $currentImage = $("#current-page");
+            window.$heading = $("#title-heading");
+            window.$currentImage = $("#current-page");
             window.comic = parseQuery(location.search);
             comic.page = parseInt(comic.page);
             comic.pages = parseInt(comic.pages);
             comic.path = comic.at.split('/');
             comic.name = comic.path[comic.path.length - 1];
             comic.shortName = comic.name.replace(/\.\w{3}$/, '');
+            comic.zoom = 100;
             $heading.text(comic.shortName);
             $('head title').text($('head title').text() + ' - ' + comic.shortName);
 
@@ -139,6 +168,13 @@
 	    });
 	
 	
+	    $('#btn-first').on('click', onPageFirst);
+	    $('#btn-prev').on('click', onPagePrevious);
+	    $('#btn-next').on('click', onPageNext);
+	    $('#btn-last').on('click', onPageLast);
+	    
+	    $('#btn-ensmall').on('click', onEnsmall);
+	    $('#btn-enlarge').on('click', onEnlarge);
 	    
 	    $(document.body).on("keyup", function(ev) {
     	      //alert(ev.which);
@@ -169,6 +205,7 @@
             });
 
 	    //$("#magazine").turn();
+	    $('.btn').tooltip({placement: 'top'});
             $currentImage.attr('src', "page" + location.search);
             showStatus();
           });
@@ -188,9 +225,16 @@
         <div class="container">
           <hr/>
           <div class="row">
-            <div class="span4 offset4">
-               <!--<button class="btn" id="btn-first">First Page</button>-->
+            <div class="span5 offset4">
+               <button class="btn" id="btn-first" title="First Page"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i></button>
+               <button class="btn" id="btn-prev" title="Previous Page"><i class="icon-chevron-left"></i></button>
                <span id="status-label" class="label label-info" style="padding: 0.5em;"></span>
+               <button class="btn" id="btn-next" title="Next Page"><i class="icon-chevron-right"></i></button>
+               <button class="btn" id="btn-last" title="Last Page"><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></button>
+            </div>
+            <div class "span2 pull-right">
+               <button class="btn" id="btn-ensmall" title="Smaller Image"><i class="icon-zoom-out"></i></button>
+               <button class="btn" id="btn-enlarge" title="Larger Image"><i class="icon-zoom-in"></i></button>
             </div>
           </div>
         </div>
