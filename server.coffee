@@ -320,4 +320,4 @@ process.on "SIGINT", ->
   router.log ' '
   process.exit 0
 
-server.listen if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 8000
+server.listen if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
