@@ -4,4 +4,6 @@ tmp
 npm-debug.log
 contents
 *.txt
+*.log
+*.pid
 *.crdownload

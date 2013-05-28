@@ -334,11 +334,20 @@ server.on 'listening', ->
   addr = server.address() or {address: '0.0.0.0', port: argv[0] or 20386}
   router.log "Serving web content at " + addr.address + ":" + addr.port  
 
-process.on "SIGINT", ->
+
+clean_up = () ->
+  console.log "Shutting Up Silver Age Comics Web Server..."
+  ##clearInterval(test_interval)
   server.close()
-  router.log ' '
-  router.log "Server shutting up..."
-  router.log ' '
+  fs.unlinkSync("#{__dirname}/server.pid")
   process.exit 0
 
+process.on "SIGINT", clean_up
+#process.on "SIGKILL", clean_up
+process.on "SIGQUIT", clean_up
+#process.on "SIGINT", clean_up
+
+
+pid = process.pid.toString()
+fs.writeFileSync("#{__dirname}/server.pid", pid, 'utf8')
 server.listen if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
