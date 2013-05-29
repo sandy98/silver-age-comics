@@ -11,6 +11,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   itemView: ItemListView
 
+  optExternalReader: true
+
   initialize: =>
     app.vent.on 'item:selected', (item) =>
       app.item = item
@@ -30,7 +32,11 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @render()
 
   onRender: =>
+    @$('#opt-external-reader').parent().tooltip placement: 'top'
     @$('.btn').on 'click', @onNavigate
+    @$('#opt-external-reader').on 'change', =>
+      @optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
+      console.log "External reader:", @optExternalReader
     start = @fullCollection.currentPage * @fullCollection.perPage + 1
     end = start + @fullCollection.perPage - 1
     total = @fullCollection.length
@@ -38,6 +44,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       end = total
     console.log start, end, total
     @$('#page-status').text "#{start} - #{end} of #{total}"
+    if @optExternalReader
+      @$('#opt-external-reader').attr 'checked', 'checked'
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()
