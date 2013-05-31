@@ -195,10 +195,31 @@ getDirAt = (at, fullpath, cb) ->
 #Routes
 #
 
+router.get "/zoompage", (req, res) ->
+  try
+    at = unescape(req.get.at).trim()
+    page = parseInt req.get.page
+    zoom = req.get.zoom
+    getItemAt at, (err, comic) ->
+      if err
+        res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+        return res.end()
+      readComicsPage comic, page, (err, data) ->
+        if err
+          res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+          return res.end()
+        buffer = data
+        if buffer.length
+          gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
+        else
+          res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=Request resulted in 0 length page"
+          res.end()
+  catch err
+    res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
+    res.end()
+
 router.get "/page", (req, res) ->
   try
-    #console.log "GET STRINGIFIED #{JSON.stringify req.get}"
-    #console.log "Cache length: #{_.keys(img_cache).length}"
     if JSON.stringify(req.get) of img_cache
        buffer = img_cache[JSON.stringify(req.get)]
        res.write buffer
@@ -210,7 +231,7 @@ router.get "/page", (req, res) ->
     getItemAt at, (err, comic) ->
       if err
         res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
-        res.end()
+        return res.end()
       readComicsPage comic, page, (err, data) ->
         if err
           res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=#{err.message}"
