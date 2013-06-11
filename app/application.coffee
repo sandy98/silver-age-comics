@@ -8,6 +8,9 @@ class Application extends Backbone.Marionette.Application
 
     @VERSION: '0.1.1'
 
+    getVisitors: (cb) =>
+      $.get '/visitors', (visitors) -> cb visitors
+
     initialize: =>
 
         UserItemView = require 'views/UserItemView'
@@ -62,9 +65,8 @@ class Application extends Backbone.Marionette.Application
 
 
         @addInitializer((options) =>
-          #@item.fetch()
-          $('#ajax-loader').ajaxStart(-> $('#ajax-loader').show())
-          $('#ajax-loader').ajaxStop(-> $('#ajax-loader').hide())
+          $(document).ajaxStart(-> $('#ajax-loader').show())
+          $(document).ajaxStop(-> $('#ajax-loader').hide())
         )
 
         @addInitializer( (options) =>

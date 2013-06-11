@@ -341,6 +341,20 @@ router.get "/users/:id", (req, res) ->
   res.writeHead(200, {'Content-type': 'text/html'})
   res.end "<h1>User No: <span style='color: red;'>" + req.params.id + "</span></h1>"
 
+router.get "/visitors", (req, res) ->
+  res.writeHead(200, {'Content-type': 'text/plain'})
+  fs.readFile "#{__dirname}#{path.sep}data#{path.sep}visits.txt", "utf8", (err, data) ->
+    if err
+      return res.end err.toString()
+    else
+      visits = (parseInt(data) + 1).toString()
+      fs.writeFile "#{__dirname}#{path.sep}data#{path.sep}visits.txt", visits, (err) ->
+        if err
+          #console.log "An error happened while writing 'visits.txt': #{err.message}"
+          res.end err.message
+        else
+          #console.log "Everything OK writing 'visits.txt'"
+          res.end visits
 #
 #End of routes
 #
