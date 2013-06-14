@@ -32,6 +32,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @render()
 
   onRender: =>
+    $('html').addClass 'busy'
     @$('#opt-external-reader').parent().tooltip placement: 'top'
     @$('.btn').on 'click', @onNavigate
     @$('#opt-external-reader').on 'change', =>
@@ -46,6 +47,15 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @$('#page-status').text "#{start} - #{end} of #{total}"
     if @optExternalReader
       @$('#opt-external-reader').attr 'checked', 'checked'
+    imgLen = @$('img').length
+    imgLoaded = 0
+    @$('img').on 'load', =>
+      imgLoaded += 1
+      console.log "Loaded #{imgLoaded} images out of #{imgLen}"
+      if imgLoaded is imgLen
+        @$('.thumbnails').slideDown(200)
+        $('html').removeClass 'busy'
+        
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()

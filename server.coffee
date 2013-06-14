@@ -11,7 +11,7 @@ http = require 'http'
 #_when = require 'when'
 async = require 'async'
 Router = require 'node-simple-router'
-gm = require 'gm'
+#gm = require 'gm'
 magick = require 'magick'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
@@ -325,9 +325,18 @@ router.get "/thumb", (req, res) ->
   #res.writeHead 200, "ContentType": "image/jpeg"
   size =  200
   image = 'supes_logo_blue_bg.jpg'
-  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
-  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
-
+  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
+  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
+    f = new magick.File(data)
+    [width, height] = f.dimensions().split('x')
+    new_width = parseInt(width) * size / 100
+    new_height = parseInt(height) * size / 100
+    f.resize(new_width, new_height)
+    data = f.getBuffer()
+    f.release()
+    res.end data
+  
 router.get "/thumb/:image/:proportion", (req, res) ->
   #res.writeHead 200, "ContentType": "image/jpeg"
   size = req.params.proportion or 100
@@ -346,8 +355,17 @@ router.get "/thumb/:image/:proportion", (req, res) ->
     image = 'supes_logo_blue_bg.jpg'
 
   console.log "Displaying thumb #{image}"
-  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
-  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
+  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
+    f = new magick.File(data)
+    [width, height] = f.dimensions().split('x')
+    new_width = parseInt(width) * size / 100
+    new_height = parseInt(height) * size / 100
+    f.resize(new_width, new_height)
+    data = f.getBuffer()
+    f.release()
+    res.end data
 
 router.get "/supi_folder", (req, res) ->
   res.writeHead 200, "ContentType": "image/jpeg"
