@@ -47,15 +47,25 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @$('#page-status').text "#{start} - #{end} of #{total}"
     if @optExternalReader
       @$('#opt-external-reader').attr 'checked', 'checked'
-    imgLen = @$('img').length
-    imgLoaded = 0
-    @$('img').on 'load', =>
+    
+    window.imgLen = @$('img').length
+    window.imgLoaded = 0
+    window.$deferImg = new $.Deferred()
+    $deferImg.progress =>
       imgLoaded += 1
       console.log "Loaded #{imgLoaded} images out of #{imgLen}"
+      @$('#progress-bar').css width: "#{imgLoaded / imgLen * 100}%"
       if imgLoaded is imgLen
+        $deferImg.resolve()
+    $deferImg.done =>
+      deferDone = =>
+        @$('#progress-wrapper').hide()
         @$('.thumbnails').slideDown(200)
         $('html').removeClass 'busy'
-        
+      setTimeout deferDone, 0
+    @$('img').on 'load error', =>
+      console.log "One of #{imgLen} images loaded"
+      $deferImg.notify()
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()
