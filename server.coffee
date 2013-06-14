@@ -293,16 +293,34 @@ router.get "/statistics", (req, res) ->
   res.end JSON.stringify {readRarPages, readZipPages, readCachePages, cacheStats}
 
 #legionthumb: decorative
+###
 router.get "/legionthumb", (req, res) ->
   option = Math.ceil(Math.random() * 3)
   res.writeHead 200, "ContentType": "image/jpeg"
-  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}legion.jpg"), 'legion.jpg')
-  if option is 1
-    thumb = thumb.sepia()
-  if option is 2
-    thumb = thumb.type('grayscale')
-  thumb.stream().pipe res
-
+  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}legion.jpg"), 'legion.jpg')
+  fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}legion.jpg", (err, data) ->
+    thumb = new magick.File(data)
+    if option is 1
+      thumb.sepia()
+    if option is 2
+      #thumb.type('grayscale')
+      thumb.charcoal()
+    newdata = thumb.getBuffer()
+    thumb.release()
+    #thumb.stream().pipe res
+    res.end newdata
+###
+router.get "/legionthumb", (req, res) ->
+  option = Math.ceil(Math.random() * 2)
+  file = ""
+  switch option
+    when 2
+      file = "Supergirls_40.png"
+    else
+      file = "legion_20.jpg"
+  res.writeHead 307, "Location": "img/#{file}"
+  res.end()
+  
 router.get "/thumb", (req, res) ->
   #res.writeHead 200, "ContentType": "image/jpeg"
   size =  200
