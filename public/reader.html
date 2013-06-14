@@ -218,14 +218,17 @@
             $(document.body).on('change', '#cbo-pages', function(evt) {
               comic.page = parseInt($('#cbo-pages').val());
               showPage();
+              $('#cbo-pages').blur();
+              $currentImage.focus();
             });
 
-              //$("#magazine").turn();
+            //$("#magazine").turn();
             //$('#cbo-pages').combobox();
-	        $('.btn').tooltip({placement: 'top'});
+	    $('.btn').tooltip({placement: 'top'});
             $currentImage.attr('src', "page" + location.search);
             showStatus();
-
+            top.window.moveTo(0, 0);
+	    top.window.resizeTo(screen.availWidth,screen.availHeight);
           });
           
         </script>

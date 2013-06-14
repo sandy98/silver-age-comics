@@ -12,6 +12,7 @@ http = require 'http'
 async = require 'async'
 Router = require 'node-simple-router'
 gm = require 'gm'
+magick = require 'magick'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
 isRarFile = require('rarfile').isRarFile 
@@ -210,7 +211,15 @@ router.get "/zoompage", (req, res) ->
           return res.end()
         buffer = data
         if buffer.length
-          gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
+            #gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
+            file = new magick.File(buffer)
+            [width, height] = file.dimensions().split('x')
+            new_width = parseInt(width) * zoom / 100
+            new_height = parseInt(height) * zoom / 100
+            file.resize(new_width, new_height)
+            buffer = file.getBuffer()
+            file.release()
+            res.end buffer
         else
           res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=Request resulted in 0 length page"
           res.end()
@@ -323,12 +332,14 @@ router.get "/thumb/:image/:proportion", (req, res) ->
   thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
 
 router.get "/supi_folder", (req, res) ->
-  #res.writeHead 200, "ContentType": "image/jpeg"
-  size = 10
+  res.writeHead 200, "ContentType": "image/jpeg"
+  image = 'superman-192x108.jpg'
+  fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}").pipe res
+  #size = 10
   #image = 'Superman_Folder.bmp'
-  image = 'superman-1920x1080.jpg'
-  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
-  thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  #image = 'superman-1920x1080.jpg'
+  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
+  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
 
 router.get "/hello", (req, res) ->
  res.end 'Hello, World!, Hola, Mundo!'

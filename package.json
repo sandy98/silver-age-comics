@@ -29,7 +29,8 @@
     "async": "~0.2.8",
     "rarfile": "~0.2.0-1",
     "underscore": "~1.4.4",
-    "graceful-fs": "~1.2.1"
+    "graceful-fs": "~1.2.1",
+    "magick": "0.0.1"
   },
   "devDependencies": {
     "mocha": "0.14.0",
