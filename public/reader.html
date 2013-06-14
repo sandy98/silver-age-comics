@@ -145,8 +145,8 @@
           
           var onEnlarge = function() {
             var curZoom = comic.zoom + 10;
-            if (curZoom > 1000)
-              curZoom = 1000;
+            if (curZoom > 100)
+              curZoom = 100;
             if (curZoom !== comic.zoom)
               zoomPage(curZoom);          
           };
