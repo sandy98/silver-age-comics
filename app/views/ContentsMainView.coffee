@@ -17,8 +17,15 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     app.vent.on 'item:selected', (item) =>
       app.item = item
       @reload()
+    app.vent.on 'thumb:loaded', @doDeferImgNotify
+    @$el.on 'click', '.btn', @onNavigate
+    @$el.on 'change', '#opt-external-reader', =>
+      @optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
+      console.log "External reader:", @optExternalReader
+    #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
     @reload()
+
 
   reload: =>
     @model = app.item
@@ -31,41 +38,42 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @collection = @fullCollection.parse()
     @render()
 
+  doDeferImgNotify: =>
+    #console.log "This is 'doDeferImgNotify'"
+    @$deferImg.notify()
+      
+  onDeferImgProgress: =>
+    @imgLoaded += 1
+    console.log "Loaded #{@imgLoaded} images out of #{@imgLen}"
+    @$('#progress-bar').css width: "#{(@imgLoaded + 1) / @imgLen * 100}%"
+    if @imgLoaded is @imgLen
+      @$deferImg.resolve()
+  
+  onDeferImgResolve: =>
+    @$('#progress-wrapper').hide()
+    @$('.thumbnails').slideDown(200)
+    $('html').removeClass 'busy'
+  
   onRender: =>
     $('html').addClass 'busy'
     @$('#opt-external-reader').parent().tooltip placement: 'top'
-    @$('.btn').on 'click', @onNavigate
-    @$('#opt-external-reader').on 'change', =>
-      @optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
-      console.log "External reader:", @optExternalReader
+    
     start = @fullCollection.currentPage * @fullCollection.perPage + 1
     end = start + @fullCollection.perPage - 1
     total = @fullCollection.length
     if end > total
       end = total
-    console.log start, end, total
     @$('#page-status').text "#{start} - #{end} of #{total}"
+
     if @optExternalReader
       @$('#opt-external-reader').attr 'checked', 'checked'
     
-    window.imgLen = @$('img').length
-    window.imgLoaded = 0
-    window.$deferImg = new $.Deferred()
-    $deferImg.progress =>
-      imgLoaded += 1
-      console.log "Loaded #{imgLoaded} images out of #{imgLen}"
-      @$('#progress-bar').css width: "#{imgLoaded / imgLen * 100}%"
-      if imgLoaded is imgLen
-        $deferImg.resolve()
-    $deferImg.done =>
-      deferDone = =>
-        @$('#progress-wrapper').hide()
-        @$('.thumbnails').slideDown(200)
-        $('html').removeClass 'busy'
-      setTimeout deferDone, 0
-    @$('img').on 'load error', =>
-      console.log "One of #{imgLen} images loaded"
-      $deferImg.notify()
+    @imgLen = @$('img').length
+    @imgLoaded = 0
+    @$deferImg = new $.Deferred()
+    @$deferImg.progress @onDeferImgProgress
+    @$deferImg.done @onDeferImgResolve
+    @$('img').on 'load error', @doDeferImgNotify
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()

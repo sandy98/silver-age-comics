@@ -11,6 +11,13 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
   events:
     'click': 'onClick'
 
+  initialize: =>
+    @$el.on 'load error', 'img', @onThumb
+    
+  onThumb: =>
+    console.log "Thumb loaded"
+    app.vent.trigger "thumb:loaded"
+    
   onClick: (evt) =>
     @model.fetch
       success: (model, response) =>
