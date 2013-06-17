@@ -50,10 +50,14 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       @$deferImg.resolve()
   
   onDeferImgResolve: =>
-    @$('#progress-wrapper').hide()
-    @$('.thumbnails').slideDown(200)
-    $('html').removeClass 'busy'
-  
+    setTimeout(
+      =>
+        @$('#progress-wrapper').hide()
+        @$('.thumbnails').slideDown(200)
+        $('html').removeClass 'busy'
+      200
+    )
+     
   onRender: =>
     $('html').addClass 'busy'
     @$('#opt-external-reader').parent().tooltip placement: 'top'
