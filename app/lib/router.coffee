@@ -8,6 +8,8 @@ module.exports = class Router extends Backbone.Router
         routes:
           '':         'home'
           'contents': 'contents'
+          'contents/:path': 'contents'
+          'contents/:path/:page': 'contents'
           'about':    'about'
           'dologout': 'logout'
           'newuser':  'newuser'
@@ -18,10 +20,11 @@ module.exports = class Router extends Backbone.Router
           application.vent.trigger 'navigation', {href: "", view: hv}
 
 
-        contents: =>
+        contents: (path, page) =>
           cv = new ContentsView()
           application.contentsView = cv
-          application.vent.trigger 'navigation', {href: "contents", view: cv}
+          application.vent.trigger 'navigation', {href: "contents", view: cv, path: path or "@", page: page or "0"}
+
 
 
         about: =>
