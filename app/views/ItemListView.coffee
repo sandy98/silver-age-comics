@@ -19,7 +19,7 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
     app.vent.trigger "thumb:loaded"
     
   onClick: (evt) =>
-    #evt.preventDefault?()
+    evt.preventDefault?()
     @model.fetch
       success: (model, response) =>
         #console.log "Item #{model.get 'name'} successfully retrieved"
