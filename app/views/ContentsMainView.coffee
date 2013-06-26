@@ -39,6 +39,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   loadItems: (evt) =>
     @fullCollection = new Items @model.get 'files'
+    ###
     if @model.get('currentPage') > @fullCollection.maxPage()
       @fullCollection.currentPage = @fullCollection.maxPage()
       @model.set('currentPage', @fullCollection.currentPage)
@@ -47,6 +48,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     if @fullCollection.currentPage < 0
       @model.set('currentPage', 0)
       @fullCollection.currentPage = 0  
+    ###
+    @fullCollection.currentPage = @model.get('currentPage')
     @collection = @fullCollection.parse()
     @render()
 

@@ -35,13 +35,13 @@ class Application extends Backbone.Marionette.Application
           #console.log "@#{where.href}@"
           if (@user.get 'username') or (not @user.get 'username')
             @layout.content.show where.view
-            @menuView.highlight where
             if where.href is 'contents'
               @menuView.setContentsRoute "#contents/#{where.path}/#{where.page}"
               path = where.path.replace(/_/g, '/') or '/'
               #console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
               @item = new Item(path: path, currentPage: parseInt(where.page))
               @vent.trigger 'item:loaded', @item
+            @menuView.highlight where
           else
             if where.href is 'contents'
               @router.navigate '', trigger: true
