@@ -19,6 +19,7 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
     app.vent.trigger "thumb:loaded"
     
   onClick: (evt) =>
+    #evt.preventDefault?()
     @model.fetch
       success: (model, response) =>
         #console.log "Item #{model.get 'name'} successfully retrieved"
@@ -30,3 +31,4 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
           app.vent.trigger "item:selected", model
       error: =>
         bootbox.alert "Warning. Server is not responding, probably down. ;-("
+    false

@@ -24,11 +24,11 @@ class Application extends Backbone.Marionette.Application
           #@item = item
           path = item.get('path')
           page = item.get 'currentPage'
-          console.log "In app received 'item:selected' event with item.path = #{path} and item.currentPage = #{page}"
+          #console.log "In app received 'item:selected' event with item.path = #{path} and item.currentPage = #{page}"
           route = "contents/#{path.replace(/\//g, '_')}/#{page}"
           route = route.replace('__', '_')
           route = route.replace('//', '/_/')
-          console.log "Now to navigate to #{route}"
+          #console.log "Now to navigate to #{route}"
           @router.navigate route, true
 
         @vent.on 'navigation', (where) =>
@@ -37,8 +37,9 @@ class Application extends Backbone.Marionette.Application
             @layout.content.show where.view
             @menuView.highlight where
             if where.href is 'contents'
+              @menuView.setContentsRoute "#contents/#{where.path}/#{where.page}"
               path = where.path.replace(/_/g, '/') or '/'
-              console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
+              #console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
               @item = new Item(path: path, currentPage: parseInt(where.page))
               @vent.trigger 'item:loaded', @item
           else

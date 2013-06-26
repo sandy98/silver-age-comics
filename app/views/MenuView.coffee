@@ -20,7 +20,7 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
       if user
         @options.vent.trigger 'login', user
       else
-       bootbox.alert err
+        bootbox.alert err
 
   onRender: =>
     #@$("li>a[href='##{@currentRoute}']").parent().addClass 'active'
@@ -33,4 +33,7 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
     #console.log "Navigate to #{where.href or '/'}"
     @$('ul.nav>li').removeClass 'active'
     @$("li>a[href='##{where.href}']").parent().addClass 'active'
+
+  setContentsRoute: (href) =>
+    @$('#contents-link').attr 'href', href
 
