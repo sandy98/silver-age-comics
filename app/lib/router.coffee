@@ -23,8 +23,7 @@ module.exports = class Router extends Backbone.Router
         contents: (path, page) =>
           cv = new ContentsView()
           application.contentsView = cv
-          application.vent.trigger 'navigation', {href: "contents", view: cv, path: path or "@", page: page or "0"}
-
+          application.vent.trigger 'navigation', {href: "contents", view: cv, path: path or "_", page: page or "0"}
 
 
         about: =>

@@ -7,7 +7,7 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
   template: template
 
   initialize: =>
-    app.vent.on 'item:selected', (item) =>
+    app.vent.on 'item:loaded', (item) =>
       @model = item
       @render()
 

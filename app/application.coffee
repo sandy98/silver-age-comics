@@ -19,12 +19,28 @@ class Application extends Backbone.Marionette.Application
 
         @user = new User
         @item = new Item app: @, path: ''
- 
+
+        @vent.on 'item:selected', (item) =>
+          #@item = item
+          path = item.get('path')
+          page = item.get 'currentPage'
+          console.log "In app received 'item:selected' event with item.path = #{path} and item.currentPage = #{page}"
+          route = "contents/#{path.replace(/\//g, '_')}/#{page}"
+          route = route.replace('__', '_')
+          route = route.replace('//', '/_/')
+          console.log "Now to navigate to #{route}"
+          @router.navigate route, true
+
         @vent.on 'navigation', (where) =>
-          console.log "@#{where.href}@"
+          #console.log "@#{where.href}@"
           if (@user.get 'username') or (not @user.get 'username')
             @layout.content.show where.view
             @menuView.highlight where
+            if where.href is 'contents'
+              path = where.path.replace(/_/g, '/') or '/'
+              console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
+              @item = new Item(path: path, currentPage: parseInt(where.page))
+              @vent.trigger 'item:loaded', @item
           else
             if where.href is 'contents'
               @router.navigate '', trigger: true

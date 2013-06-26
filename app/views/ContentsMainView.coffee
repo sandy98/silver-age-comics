@@ -14,8 +14,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
   optExternalReader: true
 
   initialize: =>
-    app.vent.on 'item:selected', (item) =>
-      app.item = item
+    app.vent.on 'item:loaded', (item) =>
+      #app.item = item
       @reload()
     app.vent.on 'thumb:loaded', @doDeferImgNotify
     @$el.on 'click', '.btn', @onNavigate
@@ -29,12 +29,17 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   reload: =>
     @model = app.item
-    @model.on 'all', @loadItems
-    @model.fetch()
+    #@model.on 'all', @loadItems
+    @model.fetch
+      success: (model, response) =>
+        @loadItems()
+      error: (evt) =>
+        #bootbox.alert "Server is not responding..."    
 
 
   loadItems: (evt) =>
     @fullCollection = new Items @model.get 'files'
+    @fullCollection.currentPage = @model.get('currentPage')
     @collection = @fullCollection.parse()
     @render()
 
@@ -44,7 +49,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       
   onDeferImgProgress: =>
     @imgLoaded += 1
-    console.log "Loaded #{@imgLoaded} images out of #{@imgLen}"
+    #console.log "Loaded #{@imgLoaded} images out of #{@imgLen}"
     @$('#progress-bar').css width: "#{(@imgLoaded + 1) / @imgLen * 100}%"
     if @imgLoaded is @imgLen
       @$deferImg.resolve()
@@ -62,9 +67,9 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     $('html').addClass 'busy'
     @$('#opt-external-reader').parent().tooltip placement: 'top'
     
-    start = @fullCollection.currentPage * @fullCollection.perPage + 1
-    end = start + @fullCollection.perPage - 1
-    total = @fullCollection.length
+    start = @fullCollection?.currentPage * @fullCollection?.perPage + 1
+    end = start + @fullCollection?.perPage - 1
+    total = @fullCollection?.length
     if end > total
       end = total
     @$('#page-status').text "#{start} - #{end} of #{total}"
@@ -103,5 +108,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
     return if page is @fullCollection.currentPage
     @fullCollection.currentPage = page
-    @collection = @fullCollection.parse()
-    @render()
+    @model.set 'currentPage', page
+    #@collection = @fullCollection.parse()
+    #@render()
+    app.vent.trigger "item:selected", @model

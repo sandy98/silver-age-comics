@@ -9,6 +9,7 @@ module.exports = class Item extends Backbone.Model
       name: ''
       path: ''
       type: 'directory'
+      currentPage: 0
       
     isDirectory: =>
       @get('type') is 'directory'
