@@ -2,6 +2,7 @@ application = require('application')
 HomeView = require('views/HomeView')
 ContentsView = require('views/ContentsView')
 AboutView = require('views/AboutView')
+ReaderView = require('views/ReaderView')
 
 module.exports = class Router extends Backbone.Router
 
@@ -11,6 +12,9 @@ module.exports = class Router extends Backbone.Router
           'contents/:path': 'contents'
           'contents/:path/:page': 'contents'
           'about':    'about'
+          'reader':   'reader'
+          'reader/:comic': 'reader'
+          'reader/:comic/:page': 'reader'
           'dologout': 'logout'
           'newuser':  'newuser'
           'edituser': 'edituser'
@@ -19,6 +23,10 @@ module.exports = class Router extends Backbone.Router
           hv = new HomeView()
           application.vent.trigger 'navigation', {href: "", view: hv}
 
+        reader: (comic, page) =>
+          page = 0 if not page
+          rv = new ReaderView comic, page
+          application.vent.trigger 'navigation', {href: "reader", view: rv}
 
         contents: (path, page) =>
           cv = new ContentsView()
