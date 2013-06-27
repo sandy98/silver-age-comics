@@ -40,7 +40,11 @@ class Application extends Backbone.Marionette.Application
               path = where.path.replace(/_/g, '/') or '/'
               #console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
               @item = new Item(path: path, currentPage: parseInt(where.page))
-              @vent.trigger 'item:loaded', @item
+              @item.fetch
+                success: (model, response) =>
+                  @vent.trigger 'item:loaded', @item
+                error: (evt) =>
+                  bootbox.alert "Server possibly down"
             @menuView.highlight where
           else
             if where.href is 'contents'

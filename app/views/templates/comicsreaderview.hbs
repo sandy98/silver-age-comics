@@ -6,25 +6,23 @@
   <div class="modal-body" style="text-align: center; min-height: 33.5em;">
       <img id="page-show" width="70%" height="70%" src="page?page={{ currentPage }}&at={{ path }}" class="img-polaroid" />
   </div>
-  <div class="modal-footer" style="padding: 10px; max-height: 4em; overflow: auto;">
+  <div class="modal-footer" style="padding: 0; max-height: 6em; min-height: 6em;">
       <!--<a href="#" class="btn btn-cancel">Cancel</a>
       <a href="#" class="btn btn-primary btn-save">Save</a>-->
-      <div class="row">
-        <div class="pagination" style="font-size: smaller;">
+        <div class="pagination" style="font-size: smaller; text-align: center;">
           <ul>
-              <li><a href="#">First</a></li>
-              <li><a href="#">Prev</a></li>
-              <li><a href="#">Next</a></li>
-              <li><a href="#">Last</a></li>
+              <li><a href="#" title="First Page">First</a></li>
+              <li><a href="#" title="Previous Page">Prev</a></li>
+              <li><a href="#" title="Next Page">Next</a></li>
+              <li><a href="#" title="Last Page">Last</a></li>
               <span class="divider">&nbsp;&nbsp;</span>
-              <li><a href="#">+</a></li>
-              <li><a href="#">-</a></li>
+              <li><a id="btn-zoom-plus" href="#" title="Zoom in image">+</a></li>
+              <li><a id="btn-zoom-minus" href="#" title="Zoom out image">-</a></li>
               <span class="divider">&nbsp;&nbsp;</span>
               {{#each pageNumbers}}
-                <li data-number="{{this.real}}"><a href="#">{{this.shown}}</a></li>
+                <!--<li data-number="{{this.real}}"><a href="#">{{this.shown}}</a></li>-->
               {{/each}}
           </ul>
         </div>
-    </div>
   </div>
 </div>

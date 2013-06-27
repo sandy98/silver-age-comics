@@ -15,21 +15,24 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
 
   reload: =>
     @model = app.item
-    @model.on 'all', @render
-    @model.fetch()
+    #@model.on 'all', @render
+    #@model.fetch()
 
   events:
     'click a': 'onClick'
 
   onClick: (evt) =>
     evt.preventDefault?()
-    console.log "Clicked on #{$(evt.target).attr('data-path')}"
+    #console.log "Clicked on #{$(evt.target).attr('data-path')}"
     @model = new Item path: $(evt.target).attr('data-path')
+    ###
     @model.fetch
       success: (model, response) =>
         app.vent.trigger "item:selected", model
       error: =>
         bootbox.alert "Warning: server is not responding."
+    ###
+    app.vent.trigger "item:selected", @model
     false
 
 

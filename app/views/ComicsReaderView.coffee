@@ -2,23 +2,28 @@ GenericPopupView = require 'views/GenericPopupView'
 template = require 'views/templates/comicsreaderview'
 
 
-module.exports = class UserItemView extends GenericPopupView
+module.exports = class ComicsReaderView extends GenericPopupView
   template: template
 
   initialize: =>
     @model.on 'change', @renderPage
+    @$('.modal-body').on 'keyup', @onKeyUp
+
+  onKeyUp: (evt) =>
+    console.log evt.which
 
   renderPage: =>
     @$('#page-show').attr 'src', "page?page=#{@model.get('currentPage')}&at=#{@model.get('path')}"
     @$('.pagination li').removeClass 'active'
     @$("li[data-number=\"#{@model.get('currentPage')}\"]").addClass 'active'
     @$('.modal-body')[0].scrollTop = 0
+    @$('.modal-footer a').tooltip()
 
   onRender: (evt) =>
     @renderPage()
 
   resize: (direction) =>
-    factor = if direction is '+' then 1 else -1
+    factor = if direction is 'btn-zoom-plus' then 1 else -1
     curr_size = parseInt(@$('#page-show').attr 'width')
     new_size = curr_size + (10 * factor)
     if new_size > 100
@@ -41,8 +46,8 @@ module.exports = class UserItemView extends GenericPopupView
       text = $(evt.target).text()
       if text.toLowerCase() in ['first','prev','next','last']
         return @[text.toLowerCase()]()
-      if text.toLowerCase() in ['+','-']
-        return @resize(text)
+      if $(evt.target).attr('id') in ['btn-zoom-plus','btn-zoom-minus']
+        return @resize($(evt.target).attr('id'))
       else
         return @model.set("currentPage", parseInt(text) - 1)
 

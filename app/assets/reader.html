@@ -180,31 +180,31 @@
 	        $('#btn-enlarge').on('click', onEnlarge);
 
 	        $(document.body).on("keyup", function(ev) {
-    	      //alert(ev.which);
-              switch (ev.which) {
-                case 103:
-                case 36:
-                  console.log("First");
-                  onPageFirst();
-                  break;
-                case 37:
-                  console.log("Previous");
-                  onPagePrevious();
-                  break;
-                case 39:
-                  console.log("Next");
-                  onPageNext();
-                  break;
-                case 97:
-                case 35:
-                  console.log("Last");
-                  onPageLast();
-                  break;
-                case 27:
-                  console.log("Close");
-                  onClose();
-                  break;
-              }
+    	          //alert(ev.which);
+                  switch (ev.which) {
+                    case 103:
+                    case 36:
+                      console.log("First");
+                      onPageFirst();
+                      break;
+                    case 37:
+                      console.log("Previous");
+                      onPagePrevious();
+                      break;
+                    case 39:
+                      console.log("Next");
+                      onPageNext();
+                       break;
+                    case 97:
+                    case 35:
+                      console.log("Last");
+                      onPageLast();
+                      break;
+                    case 27:
+                      console.log("Close");
+                      onClose();
+                      break;
+                  }
             });
 
             (function make_pages() {

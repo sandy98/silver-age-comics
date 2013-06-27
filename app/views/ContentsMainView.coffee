@@ -21,7 +21,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @$el.on 'click', '.btn', @onNavigate
     @$el.on 'change', '#opt-external-reader', =>
       @optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
-      console.log "External reader:", @optExternalReader
+      #console.log "External reader:", @optExternalReader
     #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
     @reload()
@@ -30,12 +30,15 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
   reload: =>
     @model = app.item
     #@model.on 'all', @loadItems
+    ###
     @model.fetch
       success: (model, response) =>
         @loadItems()
       error: (evt) =>
         #bootbox.alert "Server is not responding..."    
-
+    ###
+    @loadItems()
+    
 
   loadItems: (evt) =>
     @fullCollection = new Items @model.get 'files'
