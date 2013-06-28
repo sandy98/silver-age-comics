@@ -24,10 +24,12 @@ module.exports = class ContentsView extends Backbone.Marionette.Layout
         success: (model, response) =>
           #console.log "#{@nickName}, constructed by #{@constructor.name} responding to app.vent-comics:selected"
           location = "reader.html?page=0&at=#{item.get('path')}&pages=#{item.get('pages').length}"
-          if @mainView.optExternalReader
+          if app.optExternalReader is true
             window.popup = window.open(location, item.get('name'), 'location=0, directories=0, status=0, menubar=0, resizable=0')
             popup.requestFullScreen?()
           else
+            app.vent.trigger 'reader', {comic: model, page: 0}
+            ###
             #console.log "Creating a new ComicsReaderView"
             self.readerView = new ComicsReaderView model: item
             #console.log "Now to show the recently created ComicsReaderView"
@@ -37,6 +39,7 @@ module.exports = class ContentsView extends Backbone.Marionette.Layout
             catch e
               console.log e.toString()
               self.readerView.render()
+            ###
         error: (evt) => bootbox.alert "Cannot retrieve item<br/>Server possibly down."
         
   onRender: (evt) =>

@@ -11,8 +11,6 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
 
   itemView: ItemListView
 
-  optExternalReader: true
-
   initialize: =>
     app.vent.on 'item:loaded', (item) =>
       #app.item = item
@@ -20,8 +18,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     app.vent.on 'thumb:loaded', @doDeferImgNotify
     @$el.on 'click', '.btn', @onNavigate
     @$el.on 'change', '#opt-external-reader', =>
-      @optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
-      #console.log "External reader:", @optExternalReader
+      app.optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
+      #console.log "External reader:", app.optExternalReader
     #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
     @reload()
@@ -87,7 +85,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       end = total
     @$('#page-status').text "#{start} - #{end} of #{total}"
 
-    if @optExternalReader
+    if app.optExternalReader is true
       @$('#opt-external-reader').attr 'checked', 'checked'
     
     @imgLen = @$('img').length

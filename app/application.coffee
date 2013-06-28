@@ -11,6 +11,8 @@ class Application extends Backbone.Marionette.Application
     getVisitors: (cb) =>
       $.get '/visitors', (visitors) -> cb visitors
 
+    optExternalReader: false
+
     initialize: =>
 
         UserItemView = require 'views/UserItemView'
@@ -19,6 +21,16 @@ class Application extends Backbone.Marionette.Application
 
         @user = new User
         @item = new Item app: @, path: ''
+
+        @vent.on 'reader', (item) =>
+          page = item.page
+          comic = item.comic
+          zoom = item.zoom or 70
+          path = comic.get 'path'
+          route = "reader/#{path.replace(/\//g, '_')}/#{page}/#{zoom}"
+          route = route.replace('__', '_')
+          route = route.replace('//', '/_/')
+          @router.navigate route, true
 
         @vent.on 'item:selected', (item) =>
           #@item = item

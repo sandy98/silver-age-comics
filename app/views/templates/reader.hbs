@@ -1,14 +1,17 @@
 <div>
   <div class="row-fluid" style="text-align: center; max-height: 34em; min-height: 34em; overflow: auto; padding-left: 1em; margin-top: 0px;">
-      <img  width="50%" height="50%" src="http://silveragecomics.ods.org/page?page=0&at=/Legion%20of%20Super%20Heroes/Legion%20of%20Super-Heroes%20ChronoCD%2001/0010-Adventure%20Comics%20293.cbz&pages=36" />
+      <img  style="display: none;" id="current-img" width="70%" height="70%" src="" />
   </div>
   <div class="row-fluid" style="text-align: center; padding-top: 0.5em;">
-      <div class="span5 offset4">
+      <div class="span2 pull-left">
+          <a id="btn-library" class="btn btn-primary" href="#contents">Back to library</a>
+      </div>
+      <div class="span5 offset2" style="text-align: center;">
           <button class="btn" id="btn-first" title="First Page"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i></button>
           <button class="btn" id="btn-prev" title="Previous Page"><i class="icon-chevron-left"></i></button>
           <span id="status-label1" class="label label-info" style="padding: 0.5em;">Page </span>
           <select style="width: 4em; height: 1.8em; bottom: 0; margin-bottom: 0;" class="combobox" id="cbo-pages">
-              <option value="0" selected="selected">1</option>
+              <!--<option value="0" selected="selected">1</option>-->
           </select>
           <span id="status-label2" class="label label-info" style="padding: 0.5em;"></span>
           <button class="btn" id="btn-next" title="Next Page"><i class="icon-chevron-right"></i></button>

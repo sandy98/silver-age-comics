@@ -36,6 +36,7 @@ module.exports = class ItemListView extends Backbone.Marionette.ItemView
     #bootbox.alert "Clicked on a #{@model.get('type')} type item." 
     if @model.get('type') in ['rarfile', 'zipfile']
       @model.set('currentPage', 0)
+      app.libraryPath = location.href
       app.vent.trigger "comics:selected", @model
       #bootbox.alert "Clicked on a comics file"
     else
