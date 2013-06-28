@@ -183,6 +183,14 @@
 	        $(document.body).on("keyup", function(ev) {
     	          //alert(ev.which);
                   switch (ev.which) {
+                    case 107:
+                    case 187:
+                      onEnlarge();
+                      break;
+                    case 109:
+                    case 189:
+                      onEnsmall();
+                      break;
                     case 103:
                     case 36:
                       console.log("First");
