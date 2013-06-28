@@ -35,21 +35,21 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
       error: (evt) => bootbox.alert "Can't load image<br/>Server possibly down"
 
   onFirst: =>
-    console.log "Go to First"
+    #console.log "Go to First"
     @goto 0
 
   onPrev: =>
-    console.log "Go to Previous"
+    #console.log "Go to Previous"
     page = @page - 1
     if page > - 1
       @goto page
 
   onLast: =>
-    console.log "Go to Last"
+    #console.log "Go to Last"
     @goto @maxPage
 
   onNext: =>
-    console.log "Go to Next"
+    #console.log "Go to Next"
     page = @page + 1
     if page <= @maxPage
       @goto page
@@ -60,7 +60,34 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
     app.vent.trigger 'reader', {comic: @comic, page: @page, zoom: @zoom}
 
   onKeyUp: (evt) =>
-    console.log evt.which
+    #console.log evt.which
+    switch evt.which
+      when 107, 187
+        @onZoomIn()
+        return false
+      when 109, 189
+        @onZoomOut()
+        return false
+      when 36, 103
+        @onFirst()
+        return false
+      when 35, 97
+        @onLast()
+        return false
+      when 37, 100
+        @onPrev()
+        return false
+      when 39, 102
+        @onNext()
+        return false
+      when 38, 104 # scroll up
+        @$('#current-img').parent()[0].scrollTop = @$('#current-img').parent()[0].scrollTop - @$('#current-img').parent()[0].scrollHeight / 20
+        return false
+      when 40, 98 # scroll up
+        @$('#current-img').parent()[0].scrollTop = @$('#current-img').parent()[0].scrollTop + @$('#current-img').parent()[0].scrollHeight / 20
+        return false
+      else
+        return true
 
   onZoomOut: =>
     @doZoom -1
@@ -80,7 +107,7 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
       $('#current-img').attr width: "#{newZoom}%", height: "#{newZoom}%"
 
   onLoadImg:  =>
-    console.log "Image finished loading!"
+    #console.log "Image finished loading!"
     @$('#current-img').fadeIn("slow")
 
   onCboChange: =>

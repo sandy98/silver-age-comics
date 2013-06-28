@@ -12,6 +12,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
   itemView: ItemListView
 
   initialize: =>
+    $(document.body).on 'keyup', @onKeyUp
     app.vent.on 'item:loaded', (item) =>
       #app.item = item
       @reload()
@@ -23,6 +24,24 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
     @reload()
+
+  onKeyUp: (evt) =>
+    #console.log evt.which
+    switch evt.which
+      when 36, 103
+        @first()
+        return false
+      when 35, 97
+        @last()
+        return false
+      when 37, 100
+        @prev()
+        return false
+      when 39, 102
+        @next()
+        return false
+      else
+        return true
 
 
   reload: =>
