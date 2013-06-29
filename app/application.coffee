@@ -28,6 +28,7 @@ class Application extends Backbone.Marionette.Application
           page = item.page
           comic = item.comic
           zoom = item.zoom or 70
+          @dontReloadReader = item.dontReload?
           path = comic.get 'path'
           route = "reader/#{path.replace(/\//g, '_')}/#{page}/#{zoom}"
           route = route.replace('__', '_')
@@ -51,6 +52,9 @@ class Application extends Backbone.Marionette.Application
             #@layout.content.show where.view
             oldView = @currentView
             @currentView = where.view
+            if where.href is 'reader'
+              if @dontReloadReader
+                return
             if where.href is 'contents'
               @menuView.setContentsRoute "#contents/#{where.path}/#{where.page}"
               path = where.path.replace(/_/g, '/') or '/'

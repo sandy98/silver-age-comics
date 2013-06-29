@@ -26,6 +26,10 @@ module.exports = class Router extends Backbone.Router
           application.vent.trigger 'navigation', {href: "", view: hv}
 
         reader: (comic, page, zoom) =>
+          if application.dontReloadReader
+            application.currentView.page = parseInt(page)
+            application.currentView.setImage()
+            return
           $(document.body).off 'keyup'
           page = 0 if not page
           zoom = 70 if not zoom

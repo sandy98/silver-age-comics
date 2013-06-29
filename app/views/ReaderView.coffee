@@ -57,11 +57,15 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
   goto: (pageNum) =>
     @page = pageNum
     return if (@page < 0) or (@page > @maxPage)
-    app.vent.trigger 'reader', {comic: @comic, page: @page, zoom: @zoom}
-
+    app.vent.trigger 'reader', {comic: @comic, page: @page, zoom: @zoom, dontReload: true}
+    #@setImage()
+    
   onKeyUp: (evt) =>
     #console.log evt.which
     switch evt.which
+      when 27
+        window.location = @$('#btn-library').attr('href')
+        return false
       when 107, 187
         @onZoomIn()
         return false
@@ -108,6 +112,7 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
 
   onLoadImg:  =>
     #console.log "Image finished loading!"
+    $('html').removeClass('busy')
     @$('#current-img').fadeIn("slow")
 
   onCboChange: =>
@@ -125,10 +130,14 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
     return if not @loaded
     @$('#btn-library').attr 'href', app.libraryPath
     @$('.btn').tooltip()
+    @setImage()
+    @$('#cbo-pages').on 'change', @onCboChange
+
+  setImage: =>
+    $('html').addClass 'busy'
     src = "page?page=#{@page}&at=#{@path}&pages=#{@maxPage + 1}"
     @$('#current-img').attr 'src': src, 'width': "#{@zoom}%", "height": "#{@zoom}%"
     @onLoadImg()
     @showStatus()
-    @$('#cbo-pages').on 'change', @onCboChange
-
-
+    
+  
