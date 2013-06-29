@@ -17,6 +17,8 @@ class Application extends Backbone.Marionette.Application
 
         UserItemView = require 'views/UserItemView'
 
+        @currentView = null
+
         @dataSource = require './datasource'
 
         @user = new User
@@ -47,17 +49,26 @@ class Application extends Backbone.Marionette.Application
           #console.log "@#{where.href}@"
           if (@user.get 'username') or (not @user.get 'username')
             #@layout.content.show where.view
+            oldView = @currentView
+            @currentView = where.view
             if where.href is 'contents'
               @menuView.setContentsRoute "#contents/#{where.path}/#{where.page}"
               path = where.path.replace(/_/g, '/') or '/'
-              #console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}" 
-              @item = new Item(path: path, currentPage: parseInt(where.page))
-              @item.fetch
-                success: (model, response) =>
-                  @layout.content.show where.view
-                  @vent.trigger 'item:loaded', @item
-                error: (evt) =>
-                  bootbox.alert "Server possibly down"
+              #console.log "Handling contents navigation within App.\nReceived path: #{path}\nReceived page:#{where.page}"
+              #bootbox.alert "Current item path: #{@item?.get 'path'}<br/>New item path: #{path}"
+              if @item?.get('path') is path
+                console.log "No need to fetch data from server"
+                @item.set 'currentPage', parseInt(where.page)
+                @layout.content.show where.view
+                @vent.trigger 'item:loaded', @item
+              else 
+                @item = new Item(path: path, currentPage: parseInt(where.page))
+                @item.fetch
+                  success: (model, response) =>
+                    @layout.content.show where.view
+                    @vent.trigger 'item:loaded', @item
+                  error: (evt) =>
+                    bootbox.alert "Server possibly down"
             else      
               @layout.content.show where.view
             @menuView.highlight where

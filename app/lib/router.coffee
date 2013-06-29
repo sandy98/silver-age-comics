@@ -34,7 +34,10 @@ module.exports = class Router extends Backbone.Router
 
         contents: (path, page) =>
           $(document.body).off 'keyup'
-          cv = new ContentsView()
+          if application.currentView?.constructor.name is 'ContentsView'
+            cv = application.currentView
+          else
+            cv = new ContentsView()
           application.contentsView = cv
           application.vent.trigger 'navigation', {href: "contents", view: cv, path: path or "_", page: page or "0"}
 
