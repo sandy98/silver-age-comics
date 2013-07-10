@@ -4,6 +4,9 @@
 #Requires
 #
 
+require 'systemd'
+require 'autoquit'
+
 fs = require 'graceful-fs'
 path = require 'path'
 os = require 'os'
@@ -421,15 +424,18 @@ clean_up = () ->
   console.log "Shutting Up Silver Age Comics Web Server..."
   ##clearInterval(test_interval)
   server.close()
-  fs.unlinkSync("#{__dirname}/server.pid")
+  ##fs.unlinkSync("#{__dirname}/server.pid")
   process.exit 0
 
 process.on "SIGINT", clean_up
 #process.on "SIGKILL", clean_up
 process.on "SIGQUIT", clean_up
+process.on "SIGHUP", clean_up
 #process.on "SIGINT", clean_up
 
 
 pid = process.pid.toString()
-fs.writeFileSync("#{__dirname}/server.pid", pid, 'utf8')
-server.listen if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
+##fs.writeFileSync("#{__dirname}/server.pid", pid, 'utf8')
+portnum = if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
+server.autoQuit()
+server.listen if process.env.NODE_ENV is 'production' then 'systemd' else portnum

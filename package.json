@@ -30,7 +30,9 @@
     "rarfile": "~0.2.0-1",
     "underscore": "~1.4.4",
     "graceful-fs": "~1.2.1",
-    "magick": "0.0.1"
+    "magick": "0.0.1",
+    "systemd": "~0.2.4",
+    "autoquit": "~0.1.4"
   },
   "devDependencies": {
     "mocha": "0.14.0",
