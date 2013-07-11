@@ -12,7 +12,18 @@ class Application extends Backbone.Marionette.Application
       $.get '/visitors', (visitors) -> cb visitors
 
     optExternalReader: false
+    
+    theme: 'cerulean'
 
+    setReader: (external) =>
+      @optExternalReader = external
+      $.cookie('optExternalReader', @optExternalReader, expires: 365)
+  
+    setTheme: (theme) =>
+      @theme = theme
+      $.cookie('theme', @theme, expires: 365)
+      $('#current-style').attr 'href', "stylesheets/#{@theme}/bootstrap.min.css"
+      
     initialize: =>
 
         UserItemView = require 'views/UserItemView'
@@ -118,6 +129,16 @@ class Application extends Backbone.Marionette.Application
         @addInitializer((options) =>
           $(document).ajaxStart(-> $('#ajax-loader').show())
           $(document).ajaxStop(-> $('#ajax-loader').hide())
+        )
+
+        @addInitializer(
+          (options) =>
+            @setTheme($.cookie('theme') or 'cerulean')
+            if $.cookie('optExternalReader') is true
+              bReader = true
+            else
+              bReader = false
+            @setReader(bReader)
         )
 
         @addInitializer( (options) =>

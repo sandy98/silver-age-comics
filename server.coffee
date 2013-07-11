@@ -405,6 +405,11 @@ router.get "/visitors", (req, res) ->
         else
           #console.log "Everything OK writing 'visits.txt'"
           res.end visits
+          
+router.get "/cookie", (req, res) ->
+  res.writeHead(200, 'Content-Type': 'text/plain')
+  res.end req.headers.cookie?.toString() or "No cookies"
+
 #
 #End of routes
 #

@@ -19,7 +19,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     app.vent.on 'thumb:loaded', @doDeferImgNotify
     @$el.on 'click', '.btn', @onNavigate
     @$el.on 'change', '#opt-external-reader', =>
-      app.optExternalReader = if @$('#opt-external-reader').is(':checked') then true else false
+      app.setReader(if @$('#opt-external-reader').is(':checked') then true else false)
       #console.log "External reader:", app.optExternalReader
     #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
