@@ -11,7 +11,7 @@ class Application extends Backbone.Marionette.Application
     getVisitors: (cb) =>
       $.get '/visitors', (visitors) -> cb visitors
 
-    optExternalReader: false
+    #optExternalReader: false
     
     theme: 'cerulean'
 
