@@ -410,6 +410,66 @@ router.get "/cookie", (req, res) ->
   res.writeHead(200, 'Content-Type': 'text/plain')
   res.end req.headers.cookie?.toString() or "No cookies"
 
+
+router.get "/styles", (req, res) ->
+  res.writeHead(200, 'Content-Type': 'text/plain')
+  #res.end "There go the fcking styless..."
+  async.waterfall(
+    [
+      (cb) ->
+        fs.readdir "#{__dirname}#{path.sep}public#{path.sep}stylesheets", (err, files) ->
+           return cb null, files unless err
+           return cb err
+      (files, cb) ->
+        cb null, files.filter (file) -> path.extname(file) is ''
+      (files, cb) ->
+        async.map files, ((file, map_cb) -> map_cb null, "#{__dirname}#{path.sep}public#{path.sep}stylesheets#{path.sep}#{file}"), (err, full_names) ->
+          #console.log "full_names in 2: #{JSON.stringify full_names}" 
+          return cb null, files, full_names unless err
+          return cb err
+      (files, full_names, cb) ->
+        #console.log "files in 3: #{JSON.stringify files}" 
+        #console.log "full_names in 3: #{JSON.stringify full_names}" 
+        async.map full_names, fs.stat, (err, stats) ->
+          if err
+            cb err
+          else
+            cb null, files, full_names, stats
+      (files, full_names, stats, cb) ->
+        file_objs = []
+        for file, index in files
+          file_objs.push file: files[index], fullName: full_names[index], stat: stats[index]
+        async.filter file_objs, ((obj, filter_cb) -> filter_cb obj.stat.isDirectory()), (dir_objs) -> cb null, dir_objs 
+      (dir_objs, cb) ->
+        async.filter( 
+          dir_objs
+          (obj, filter_cb) ->
+            fs.readdir obj.fullName, (err, contents) ->
+              #console.log "Error?: #{err}"
+              #console.log "Contents: #{contents}"
+              if err
+                filter_cb false
+              else
+                try
+                  bResult = if ('bootstrap.min.css' in contents) then true else false
+                  filter_cb bResult
+                catch e
+                  filter_cb false
+          (dir_objs) -> cb null, dir_objs
+        )    
+    ]
+    (err, directories) ->
+       if err
+         res.end err.toString()
+       else
+         #console.log "full_names in final: #{JSON.stringify directories}"
+         results = []
+         for obj in directories
+           results.push value: obj.file, text: "#{obj.file.charAt(0).toUpperCase()}#{obj.file.substring(1)}" 
+         res.end JSON.stringify results
+  )
+
+  
 #
 #End of routes
 #
