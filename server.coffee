@@ -169,7 +169,9 @@ getDirAt = (at, fullpath, cb) ->
           for n in [0...stats.length]
             if stats[n].isDirectory()
               items[n].type = "directory"
-          callb null, items
+          directories = items.filter((item) -> item.type is 'directory')
+          comics = items.filter((item) -> item.type isnt 'directory')
+          callb null, directories.concat comics
         
     (items, callb) ->
       async.filterSeries(
@@ -276,7 +278,7 @@ router.get "/page", (req, res) ->
 router.get "/item", (req, res) ->
   try
     at = if req.get.at then unescape(req.get.at) else ''
-    console.log "Requested path: #{at}"
+    #console.log "Requested path: #{at}"
     getItemAt unescape(at), (err, data) ->
       if err
         res.writeHead 500, "ContentType": "text/plain"
