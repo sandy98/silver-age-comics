@@ -1,4 +1,7 @@
 template = require './templates/menu'
+Styles = require 'models/styles'
+StylesView = require 'views/StylesView'
+app = require 'application'
 
 module.exports = class MenuView extends Backbone.Marionette.ItemView
 
@@ -6,6 +9,11 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
 
   events:
     'submit': 'submit'
+    'change #cbo-styles': 'setTheme'
+
+  setTheme: =>
+    #console.log "Setting app theme..."
+    app.setTheme @$('#cbo-styles').val()
 
   submit: (ev) =>
     ev.preventDefault?()
@@ -27,6 +35,17 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
     @highlight href: @currentRoute
     @$('a[href="#newuser"], a[href="#edituser"]').tooltip placement: 'bottom'
     #@$('.navbar-inner').after("<img src='img/supes_logo.jpg' width='3%' height='3%' />")
+    #@stylesView = new StylesView(collection: new Styles(), el: '#cbo-styles')
+    styles = new Styles()
+    styles.fetch
+      success: =>
+        for index in [0..(styles.length - 1)]
+          #console.log JSON.stringify styles.at(index).toJSON()
+          $option = $("<option>")
+          $option.val(styles.at(index).get('value'))
+          $option.text(styles.at(index).get('text'))
+          @$('#cbo-styles').append $option
+        @$('#cbo-styles').val(app.theme)
 
   highlight: (where) =>
     @currentRoute = where.href

@@ -3,6 +3,7 @@ require 'lib/view_helper'
 User = require 'models/user'
 Item = require 'models/item'
 Items = require 'models/items'
+Styles = require 'models/styles'
 
 class Application extends Backbone.Marionette.Application
 
@@ -146,6 +147,8 @@ class Application extends Backbone.Marionette.Application
             AppLayout = require 'views/AppLayout'
             MenuView = require 'views/MenuView'
             FooterView = require 'views/FooterView'
+            @styles = new Styles()
+            @styles.fetch()
             @layout = new AppLayout()
             @layout.render()
             @menuView = new MenuView(vent: @vent, dataSource: @dataSource, model: @user)
