@@ -96,7 +96,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
      
   onRender: =>
     $('html').addClass 'busy'
-    @$('#opt-external-reader').parent().tooltip placement: 'top'
+    #@$('#opt-external-reader').parent().tooltip placement: 'top'
     
     start = @fullCollection?.currentPage * @fullCollection?.perPage + 1
     end = start + @fullCollection?.perPage - 1

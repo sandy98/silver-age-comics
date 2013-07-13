@@ -52,7 +52,9 @@ module.exports = class MenuView extends Backbone.Marionette.ItemView
           @$('#cbo-styles').append $option
         @$('#cbo-styles').val(app.theme)
     @$('#opt-external-reader')[0].checked = app.optExternalReader
-
+    #@$('#opt-external-reader').parent().tooltip placement: 'top'
+    #@$('label.checkbox').tooltip placement: 'bottom'
+    
   highlight: (where) =>
     @currentRoute = where.href
     #console.log "Navigate to #{where.href or '/'}"

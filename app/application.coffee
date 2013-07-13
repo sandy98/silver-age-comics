@@ -135,7 +135,7 @@ class Application extends Backbone.Marionette.Application
         @addInitializer(
           (options) =>
             @setTheme($.cookie('theme') or 'cerulean')
-            if $.cookie('optExternalReader') is true
+            if $.cookie('optExternalReader') is 'true'
               bReader = true
             else
               bReader = false
