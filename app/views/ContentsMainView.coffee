@@ -88,7 +88,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     setTimeout(
       =>
         @$('#progress-wrapper').hide()
-        @$('.thumbnails').slideDown(200)
+        #@$('.thumbnails').slideDown(200)
+        @$('.thumbnails').effect 'slide', 750
         $('html').removeClass 'busy'
       200
     )
@@ -104,8 +105,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       end = total
     @$('#page-status').text "#{start} - #{end} of #{total}"
 
-    if app.optExternalReader is true
-      @$('#opt-external-reader').attr 'checked', 'checked'
+    #if app.optExternalReader is true
+    #  @$('#opt-external-reader').attr 'checked', 'checked'
     
     @imgLen = @$('img').length
     @imgLoaded = 0
