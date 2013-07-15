@@ -113,7 +113,8 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
   onLoadImg:  =>
     #console.log "Image finished loading!"
     $('html').removeClass('busy')
-    @$('#current-img').fadeIn("slow")
+    #@$('#current-img').fadeIn("slow")
+    @$('#current-img').effect("slide")
 
   onCboChange: =>
     @goto parseInt @$('#cbo-pages').val()
@@ -136,8 +137,10 @@ module.exports = class ContentsView extends Backbone.Marionette.ItemView
   setImage: =>
     $('html').addClass 'busy'
     src = "page?page=#{@page}&at=#{@path}&pages=#{@maxPage + 1}"
+    @$('#current-img').off 'load'
+    @$('#current-img').on 'load', @onLoadImg
     @$('#current-img').attr 'src': src, 'width': "#{@zoom}%", "height": "#{@zoom}%"
-    @onLoadImg()
+    #@onLoadImg()
     @showStatus()
     
   

@@ -119,7 +119,7 @@
           var showPage = function() {
             setBusy(true);
             var imgUrl = $currentImage.attr('src').replace(/page=\d+/, 'page=' + comic.page);
-	        $currentImage.fadeOut();
+	        //$currentImage.fadeOut();
             $currentImage.attr('src', imgUrl);
             showStatus();
 	      };
@@ -170,7 +170,8 @@
 
 	        $currentImage.on("load", function() {
 	          setBusy(false);
-	          $currentImage.fadeIn();
+	          //$currentImage.fadeIn();
+	          $currentImage.effect('slide');
 	          });
 	
 	
