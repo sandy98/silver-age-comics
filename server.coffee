@@ -47,6 +47,7 @@ router._404 = (req, res, path) ->
 #Auxiliary functions and definitions
 #
 
+###
 process.on 'uncaughtException', (err) ->
   if err.code is "EMFILE"
     console.log "Pesky 'Too many files open' strikes again.\nFailure was set after #{readRarPages} read RAR pages."
@@ -58,7 +59,8 @@ process.on 'uncaughtException', (err) ->
   else
     console.error("ANOTHER KIND OF UNCAUGHT ERROR: #{err.toString()}")
     console.log("Node NOT Exiting...")
-  
+###
+
 USE_CACHE = true
 MAX_CACHE_SIZE = 100
 

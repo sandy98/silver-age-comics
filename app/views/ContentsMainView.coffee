@@ -12,15 +12,16 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
   itemView: ItemListView
 
   initialize: =>
+    @direction = "left"
     $(document.body).on 'keyup', @onKeyUp
     app.vent.on 'item:loaded', (item) =>
       #app.item = item
       @reload()
     app.vent.on 'thumb:loaded', @doDeferImgNotify
     @$el.on 'click', '.btn', @onNavigate
-    @$el.on 'change', '#opt-external-reader', =>
-      app.setReader(if @$('#opt-external-reader').is(':checked') then true else false)
-      #console.log "External reader:", app.optExternalReader
+    ##@$el.on 'change', '#opt-external-reader', =>
+      ##app.setReader(if @$('#opt-external-reader').is(':checked') then true else false)
+      ##console.log "External reader:", app.optExternalReader
     #@$el.on 'load error', 'ul img', @doDeferImgNotify
 
     @reload()
@@ -89,11 +90,15 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       =>
         @$('#progress-wrapper').hide()
         #@$('.thumbnails').slideDown(200)
-        @$('.thumbnails').effect 'slide', 750
+        @doSlide()
         $('html').removeClass 'busy'
       200
     )
-     
+  
+  doSlide: =>
+    console.log "Sliding thumbs in the #{@direction} direction"
+    @$('.thumbnails').effect 'slide', direction: @direction
+
   onRender: =>
     $('html').addClass 'busy'
     #@$('#opt-external-reader').parent().tooltip placement: 'top'
@@ -138,8 +143,9 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       page = max
 
     return if page is @fullCollection.currentPage
+    @direction = if page > @fullCollection.currentPage then "left" else "right"
     @fullCollection.currentPage = page
     @model.set 'currentPage', page
     #@collection = @fullCollection.parse()
     #@render()
-    app.vent.trigger "item:selected", @model
+    app.vent.trigger "item:selected", @model, @direction

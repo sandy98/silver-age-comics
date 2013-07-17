@@ -133,10 +133,10 @@
           };
           
           var onClose = function() {window.close();};
-          var onPageFirst = function () {comic.page = 0; showPage();};
-          var onPagePrevious = function () {if (comic.page === 0) return; comic.page -= 1; showPage();};
-          var onPageNext = function () {if (comic.page === (comic.pages - 1)) return; comic.page += 1; showPage();};
-          var onPageLast = function () {comic.page = comic.pages - 1; showPage();};
+          var onPageFirst = function () {comic.direction = -1; comic.page = 0; showPage();};
+          var onPagePrevious = function () {if (comic.page === 0) return; comic.page -= 1; comic.direction = -1; showPage();};
+          var onPageNext = function () {if (comic.page === (comic.pages - 1)) return; comic.page += 1; comic.direction = 1; showPage();};
+          var onPageLast = function () {comic.page = comic.pages - 1; comic.direction = 1; showPage();};
           
           var onEnsmall = function() {
             var curZoom = comic.zoom - 10;
@@ -152,6 +152,16 @@
               curZoom = 100;
             if (curZoom !== comic.zoom)
               zoomPage(curZoom);          
+          };
+          
+          var doSlideEffect = function() {
+            var direction;
+            if (comic.direction < 0)
+              direction = "right";
+            else
+              direction = "left";
+              
+            $currentImage.effect('slide', {direction: direction});
           };
           
           $(document).ready(function() {
@@ -171,7 +181,8 @@
 	        $currentImage.on("load", function() {
 	          setBusy(false);
 	          //$currentImage.fadeIn();
-	          $currentImage.effect('slide');
+	          doSlideEffect();
+	          
 	          });
 	
 	
@@ -228,7 +239,12 @@
             })();
 
             $(document.body).on('change', '#cbo-pages', function(evt) {
+              oldpage = comic.page;
               comic.page = parseInt($('#cbo-pages').val());
+              if (oldpage < comic.page)
+                comic.direction = 1;
+              else
+                comic.direction = -1;
               showPage();
               $('#cbo-pages').blur();
               $currentImage.focus();

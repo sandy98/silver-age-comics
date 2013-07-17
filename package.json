@@ -32,7 +32,8 @@
     "graceful-fs": "~1.2.1",
     "magick": "0.0.1",
     "systemd": "~0.2.4",
-    "autoquit": "~0.1.4"
+    "autoquit": "~0.1.4",
+    "nedb": "~0.8.3"
   },
   "devDependencies": {
     "mocha": "0.14.0",
