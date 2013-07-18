@@ -70,7 +70,8 @@ readZipPages = 0
 readCachePages = 0
 
 #rootDir = "#{__dirname}#{path.sep}"
-rootDir = "/home/ernesto/Dropbox/programas/amecro/www/silvercomics#{path.sep}"
+#rootDir = "/home/ernesto/Dropbox/programas/amecro/www/silvercomics#{path.sep}"
+rootDir = "/home/ernesto/programas/git-projects/propios/silvercomics#{path.sep}"
 contentsDir = "#{rootDir}contents#{path.sep}"
 
 readComicsPage = (comic, page, cb) ->
