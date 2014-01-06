@@ -21,6 +21,9 @@ RarFile = require('rarfile').RarFile
 isRarFile = require('rarfile').isRarFile 
 _ = require('underscore')._
 
+#comics_lister = require path.resolve("#{__dirname}/comics_lister")
+comics_lister = require "comics_lister"
+
 #
 #End of requires
 #
@@ -318,7 +321,8 @@ router.get "/legionthumb", (req, res) ->
     #thumb.stream().pipe res
     res.end newdata
 ###
-router.get "/legionthumb", (req, res) ->
+
+router.get "/legionthumb_old", (req, res) ->
   option = Math.ceil(Math.random() * 2)
   file = ""
   switch option
@@ -329,6 +333,18 @@ router.get "/legionthumb", (req, res) ->
   res.writeHead 307, "Location": "img/#{file}"
   res.end()
   
+router.get "/legionthumb", (req, res) ->
+  mycb = (comics) ->
+    selected = Math.floor(Math.random() * comics.length)
+    file = comics[selected].file.replace /.+contents\//, ''
+    url = "zoompage?zoom=16&page=0&at=/#{file}"
+    #router.log "URL for /legionthumb: #{url}"
+    res.writeHead 307, "Location": "#{url}"
+    res.end()
+  
+  candidates = ['Adventure Comics', 'Action Comics', 'Superman', 'Superboy', 'Supergirl', 'Batman']
+  comics_lister "#{contentsDir}#{candidates[Math.floor(Math.random() * candidates.length)]}", mycb
+
 router.get "/thumb", (req, res) ->
   #res.writeHead 200, "ContentType": "image/jpeg"
   size =  200
@@ -487,7 +503,7 @@ argv = process.argv.slice 2
 
 server.on 'listening', ->
   addr = server.address() or {address: '0.0.0.0', port: argv[0] or 20386}
-  router.log "Serving web content at " + addr.address + ":" + addr.port  
+  router.log "Serving web content at #{addr.address}:#{addr.port} - PID: #{process.pid}"  
 
 
 clean_up = () ->
@@ -501,7 +517,7 @@ process.on "SIGINT", clean_up
 #process.on "SIGKILL", clean_up
 process.on "SIGQUIT", clean_up
 process.on "SIGHUP", clean_up
-#process.on "SIGINT", clean_up
+process.on "SIGTERM", clean_up
 
 
 pid = process.pid.toString()
