@@ -10,4 +10,8 @@ module.exports = class HomeView extends Backbone.Marionette.ItemView
 	                           $('#home-img').attr('src', '/legionthumb?' + new Date().getTime())
 	                         , 10000)
 	                         
-	                         
+	onBeforeClose: =>
+	  clearInterval @refresh_img_timer
+	  true
+	  
+	  
