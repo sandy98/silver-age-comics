@@ -7,7 +7,7 @@ module.exports = class HomeView extends Backbone.Marionette.ItemView
 	initialize: =>
 	  @refresh_img_timer = setInterval(
 	                         ->
-	                           $('img.img-polaroid').attr('src', '/legionthumb?' + new Date().getTime())
+	                           $('#home-img').attr('src', '/legionthumb?' + new Date().getTime())
 	                         , 10000)
 	                         
 	                         
