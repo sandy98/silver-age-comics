@@ -337,10 +337,12 @@ router.get "/legionthumb", (req, res) ->
   mycb = (comics) ->
     selected = Math.floor(Math.random() * comics.length)
     file = comics[selected].file.replace /.+contents\//, ''
-    url = "zoompage?zoom=16&page=0&at=/#{file}"
+    #router.log "Selected file is: #{file}"
+    #url = "zoompage?zoom=16&page=0&at=/#{file}"
     #router.log "URL for /legionthumb: #{url}"
-    res.writeHead 307, "Location": "#{url}"
-    res.end()
+    #res.writeHead 307, "Location": "#{url}"
+    res.writeHead 200, "Content-Type": "text/plain"
+    res.end(file)
   
   candidates = ['Adventure Comics', 'Action Comics', 'Superman', 'Superboy', 'Supergirl', 'Batman']
   comics_lister "#{contentsDir}#{candidates[Math.floor(Math.random() * candidates.length)]}", mycb
@@ -403,14 +405,6 @@ router.get "/supi_folder", (req, res) ->
 
 router.get "/hello", (req, res) ->
  res.end 'Hello, World!, Hola, Mundo!'
-
-router.get "/users", (req, res) ->
-  res.writeHead(200, {'Content-type': 'text/html'})
-  res.end '<h1 style="color: navy; text-align: center;">Active members registry</h1>'
-
-router.get "/users/:id", (req, res) ->
-  res.writeHead(200, {'Content-type': 'text/html'})
-  res.end "<h1>User No: <span style='color: red;'>" + req.params.id + "</span></h1>"
 
 router.get "/visitors", (req, res) ->
   res.writeHead(200, {'Content-type': 'text/plain'})
