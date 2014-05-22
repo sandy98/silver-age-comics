@@ -9,7 +9,7 @@ module.exports = class HomeView extends Backbone.Marionette.ItemView
       #$('#home-img').attr('src', '/legionthumb?' + new Date().getTime())
       $.get('/legionthumb', (file) ->
         $('#home-img').attr('src', "/zoompage?zoom=16&page=0&at=/#{file}")
-        $('#home-href').attr('data-href', "/#reader/#{file.replace(/\//g, '_')}/0/70"))
+        $('#random-link').attr('href', "/#reader/#{file.replace(/\//g, '_')}/0/70"))
 
     show_home_img()
 
@@ -20,5 +20,5 @@ module.exports = class HomeView extends Backbone.Marionette.ItemView
 	onBeforeClose: =>
 	  clearInterval @refresh_img_timer
 	  true
-	  
-	  
+
+#reader/_Adventure Comics_Adventure Comics v1 032-503 after New Adventure Comics 31 (1938-1983)_301-400_Adventure Comics v1 302.cbr/0/70
