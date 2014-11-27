@@ -32,6 +32,7 @@ comics_lister = require "comics_lister"
 #Main objects definitions
 #
 
+process.chdir __dirname
 
 router = Router(list_dir: false)
 server = http.createServer router
@@ -519,3 +520,4 @@ pid = process.pid.toString()
 portnum = if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
 server.autoQuit()
 server.listen if process.env.NODE_ENV is 'production' then 'systemd' else portnum
+#server.listen 20386
