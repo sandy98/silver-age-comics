@@ -80,9 +80,9 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
       
   onDeferImgProgress: =>
     @imgLoaded += 1
-    #console.log "Loaded #{@imgLoaded} images out of #{@imgLen}"
+    console.log "Loaded #{@imgLoaded} images out of #{@imgLen}"
     @$('#progress-bar').css width: "#{(@imgLoaded + 1) / @imgLen * 100}%"
-    if @imgLoaded is @imgLen
+    if @imgLoaded >= (@imgLen - 1)
       @$deferImg.resolve()
   
   onDeferImgResolve: =>
@@ -92,7 +92,7 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
         #@$('.thumbnails').slideDown(200)
         @doSlide()
         $('html').removeClass 'busy'
-      200
+      0
     )
   
   doSlide: =>
@@ -118,7 +118,8 @@ module.exports = class ContentsView extends Backbone.Marionette.CompositeView
     @$deferImg = new $.Deferred()
     @$deferImg.progress @onDeferImgProgress
     @$deferImg.done @onDeferImgResolve
-    @$('img').on 'load error', @doDeferImgNotify
+    @$('img').on 'load', @doDeferImgNotify
+    @$('img').on 'error', @doDeferImgNotify
 
   onNavigate: (evt) =>
     @[$(evt.target).attr("data-nav")]()

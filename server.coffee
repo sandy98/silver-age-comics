@@ -15,7 +15,8 @@ http = require 'http'
 async = require 'async'
 Router = require 'node-simple-router'
 #gm = require 'gm'
-magick = require 'magick'
+#magick = require 'magick'
+magick = require 'imagemagick-native'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
 isRarFile = require('rarfile').isRarFile 
@@ -224,13 +225,16 @@ router.get "/zoompage", (req, res) ->
         buffer = data
         if buffer.length
             #gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
-            file = new magick.File(buffer)
-            [width, height] = file.dimensions().split('x')
+            #file = new magick.File(buffer)
+            #[width, height] = file.dimensions().split('x')
+            file = magick.identify(srcData: buffer)
+            [width, height] = [file.width, file.height]
             new_width = parseInt(width) * zoom / 100
             new_height = parseInt(height) * zoom / 100
-            file.resize(new_width, new_height)
-            buffer = file.getBuffer()
-            file.release()
+            #file.resize(new_width, new_height)
+            #buffer = file.getBuffer()
+            #file.release()
+            buffer = magick.convert({srcData: buffer, width: new_width, height: new_height})
             res.end buffer
         else
           res.writeHead 301, "Location": "http://placehold.it/1600x200.png/ffffffff&text=Request resulted in 0 length page"
@@ -344,7 +348,7 @@ router.get "/legionthumb", (req, res) ->
     #res.writeHead 307, "Location": "#{url}"
     res.writeHead 200, "Content-Type": "text/plain"
     res.end(file)
-  
+
   candidates = ['Adventure Comics', 'Action Comics', 'Superman', 'Superboy', 'Supergirl', 'Batman']
   comics_lister "#{contentsDir}#{candidates[Math.floor(Math.random() * candidates.length)]}", mycb
 
@@ -355,13 +359,15 @@ router.get "/thumb", (req, res) ->
   #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
   #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
   fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
-    f = new magick.File(data)
-    [width, height] = f.dimensions().split('x')
+    #f = new magick.File(data)
+    f = magick.identify(srcData: data)
+    [width, height] = [f.width, f.height]
     new_width = parseInt(width) * size / 100
     new_height = parseInt(height) * size / 100
-    f.resize(new_width, new_height)
-    data = f.getBuffer()
-    f.release()
+    #f.resize(new_width, new_height)
+    #data = f.getBuffer()
+    #f.release()
+    data = magick.convert(srcData: data, width: new_width, height: new_height)
     res.end data
   
 router.get "/thumb/:image/:proportion", (req, res) ->
@@ -385,13 +391,16 @@ router.get "/thumb/:image/:proportion", (req, res) ->
   #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
   #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
   fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
-    f = new magick.File(data)
-    [width, height] = f.dimensions().split('x')
+    #f = new magick.File(data)
+    f = magick.identify({srcData: data})
+    #[width, height] = f.dimensions().split('x')
+    [width, height] = [f.width, f.height]
     new_width = parseInt(width) * size / 100
     new_height = parseInt(height) * size / 100
-    f.resize(new_width, new_height)
-    data = f.getBuffer()
-    f.release()
+    #f.resize(new_width, new_height)
+    #data = f.getBuffer()
+    #f.release()
+    data = magick.convert(srcData: data, width: new_width, height: new_height)
     res.end data
 
 router.get "/supi_folder", (req, res) ->
@@ -518,6 +527,6 @@ process.on "SIGTERM", clean_up
 pid = process.pid.toString()
 ##fs.writeFileSync("#{__dirname}/server.pid", pid, 'utf8')
 portnum = if argv[0]? and not isNaN(parseInt(argv[0])) then parseInt(argv[0]) else 20386
-server.autoQuit()
-server.listen if process.env.NODE_ENV is 'production' then 'systemd' else portnum
-#server.listen 20386
+#server.autoQuit()
+#server.listen if process.env.NODE_ENV is 'production' then 'systemd' else portnum
+server.listen 20386
