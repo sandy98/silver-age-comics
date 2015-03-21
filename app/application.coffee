@@ -131,6 +131,7 @@ class Application extends Backbone.Marionette.Application
           $(document).ajaxStart(-> $('#ajax-loader').show())
           $(document).ajaxStop(-> $('#ajax-loader').hide())
           $(document).ajaxError(-> $('#ajax-loader').hide())
+          $(document).ajaxComplete(-> $('#ajax-loader').hide())
         )
 
         @addInitializer(
