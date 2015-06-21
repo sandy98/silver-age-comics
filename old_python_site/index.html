@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Silver Age Comics Site</title>
+		<link type="text/css" href="css/redmond/jquery-ui-1.10.2.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="css/nifty.css" rel="stylesheet" media="screen" />	
+		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.10.2.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="js/nifty.js"></script>
+		<script src ="js/index.js" type="text/javascript"></script>
+		<style type="text/css">
+			/*demo page css*/
+			body { 
+			  padding: 0.5em; font: 62.5% "Trebuchet MS", sans-serif; margin: 15px; 
+			  background: #86B5D9;
+			  background-image: url(images/supes_logo_blue_bg_transparent_50_60.png);
+			  background-repeat: no-repeat;
+			  background-position: right top;
+			 
+			  }
+			.demoHeaders { margin-top: 2em; }
+			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+			ul#icons {margin: 0; padding: 0;}
+			ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+			ul#icons span.ui-icon {float: left; margin: 0 4px;}
+			#comicsFrame {
+				/* background: #86B5D9; 
+				color: rgb(255,255,255); */
+				padding: 0.5em; margin: 0.5em; border: 0px solid #86B5D9; 
+				position: relative; width: 98%; height: 350px;
+				}
+		        .home-page-p {
+		          line-height: 1.5; margin: 1em 0; width: 50%;
+		        }		
+		</style>	
+	</head>
+	<body>
+		<!-- Tabs -->
+		<h2 class="demoHeaders" style="color: maroon;">Comics Menu&nbsp;</h2>
+		<div id="tabs" style="background: #86B5D9;">
+			<ul>
+				<li><a href="#home">Home</a></li>
+				<li><a href="#comics">Comics</a></li>
+				<li><a href="#about">About</a></li>
+			</ul>
+			<div id="home" style="font-size: 1.3em; background: white; height: 27em;">
+				<div style="float: left;">
+					<h1>Welcome to Silver Age Comics Web Site!</h1>
+					<p class="home-page-p">
+					  This site is devoted to preserve the rich heritage of the Silver Age of Comics.<br/>
+					  Here you'll be able to read online some of the greatest comics of the Silver Age<br/>
+					  We hope this encourages you to buy your own copies of these fine comics and by so doing adding to the preserving mission.<br/> 
+					  For further info regarding comics acquisition, visit <a target="_blank" href="http://www.dccomics.com/">DC Comics</a><br/>
+					  Don't let the flame extinguish!
+					</p>
+					<p class="home-page-p">
+						Please see <a id="lnkComics" href="javascript: void();">our fine comics selection</a>, and enjoy!  
+						<img src="images/Superman_Folder.bmp"></img>
+					</p>
+					<p class="home-page-p">
+					  And don't miss our <strong>2013 new, improved</strong> twin site: 
+					  <a href="http://www.silvercomics.com.ar">Silver Age Comics</a>
+					</p>
+				</div>
+				<div style="position:absolute; top: 10%; right: 10px; float: right; background-color: #86B5D9; border: #86B5D9; height: 90%; width: 25%;" id="loginarea">
+					<div id="login" style="color: maroon; padding: 1em;">
+						<table>
+							<tr><td>eMail:</td><td><input type="text" id="txteMail"/></td></tr>
+							<tr><td>Password:</td><td><input type="password" id="txtPwd"/></td></tr>
+							<tr><td>&nbsp;</td><td style="text-align: right;"><input type="button" value="Login" id="cmdLogin"/></td></tr>
+						</table>
+					</div>
+					<div id="logout" style="color: maroon; padding: 1em;">
+						<span id="txtNick"></span>&nbsp;&nbsp;&nbsp;
+						<input id="cmdLogout" type="button" value="Logout"/>
+					</div>
+					<hr/>
+					<div id="registerarea" style="color: maroon; padding: 1em;">
+						<h4>New member? Register here!</h4>
+						<table>
+							<tr><td>Nickname:</td><td><input type="text" id="txtrNick"/></td></tr>
+							<tr><td>eMail:</td><td><input type="text" id="txtreMail"/></td></tr>
+							<tr><td>Password:</td><td><input type="password" id="txtrPwd"/></td></tr>
+							<tr><td>Password (again):</td><td><input type="password" id="txtrPwd2"/></td></tr>
+							<tr><td>&nbsp;</td><td style="text-align: right;"><input type="button" value="Register" id="cmdRegister"/></td></tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="comics" style="background: white; text-align: center; height: 36em;">
+				<div id="comicsFrame" style="vertical-align: middle; text-align: center; height: 350px; width: 90%; position: relative;">
+					Phasellus mattis tincidunt nibh. Cras orci urna, blandit id, pretium vel, aliquet ornare, felis. Maecenas scelerisque sem non nisl. Fusce sed lorem in enim dictum bibendum.
+				</div>
+				
+				<div id="pager" style="vertical-align: middle; text-align: center; height: 2em; width: 90%; position: relative; ">
+					<input type="button" value="&lt;&lt;" id="cmdPageFirst"/>
+					<input type="button" value="&lt;" id="cmdPagePrevious"/>
+					<span id="lblCurrent" style="border: solid 1px; padding: 0.3em; color: #1D5987;"></span>
+					<input type="button" value="&gt;" id="cmdPageNext"/>
+					<input type="button" value="&gt;&gt;" id="cmdPageLast"/>
+				</div>
+			</div>
+			<div id="about" style="background: white; height: 36em;">
+				<strong>
+				Wow! It's been a long time now...but...<br/>
+				<h2>We're back!</h2>
+				And now... stronger than ever!<br/>
+				Now, besides the classic Legion of Superheroes and Crisis on Infinite Earths<br/>
+				You get...<br/>
+				<ul>
+				  <li>The complete Adventure Comics Collection!</li>
+				  <li>The complete Action Comics Collection!</li>
+				  <li>The complete Superboy Collection!</li>
+				</ul>
+				And, as of May 2013, a lot more! Just browse through it!<br/>
+				</strong>
+				<hr/>
+				<h5>Your contributions to help us keep up and running will be greatly appreciated.</h5>
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                  <input type="hidden" name="cmd" value="_s-xclick">
+                                  <input type="hidden" name="hosted_button_id" value="AAEDARGYSGDMJ">
+                                  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                                  <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                                </form>
+
+
+			</div>
+		</div>	
+		<div style="background: white; font-size: 0.9em; position: absolute; float: right; border: solid 1px; padding: 0.5em; left: 90%; top: 95%;">
+			You're visitor No <span style="color: blue;" id="spanVisitors">0</span>
+		</div>
+		<div id="loading" style="z-index: 1000; position: absolute; left: 90%; top: 5%;">
+		    <img src="images/ajax-loader.gif"></img>
+		</div>
+	</body>
+</html>
+
+
