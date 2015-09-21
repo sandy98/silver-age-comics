@@ -14,16 +14,16 @@ http = require 'http'
 #_when = require 'when'
 async = require 'async'
 Router = require 'node-simple-router'
-#gm = require 'gm'
+gm = require('gm').subClass({imageMagick: true});
 #magick = require 'magick'
-magick = require 'imagemagick-native'
+#magick = require 'imagemagick'
 ZipFile = require 'adm-zip'
 RarFile = require('rarfile').RarFile
 isRarFile = require('rarfile').isRarFile 
 _ = require('underscore')._
 
 #comics_lister = require path.resolve("#{__dirname}/comics_lister")
-comics_lister = require "comics_lister"
+comics_lister = require "./comics_lister.coffee"
 
 #
 #End of requires
@@ -224,7 +224,7 @@ router.get "/zoompage", (req, res) ->
           return res.end()
         buffer = data
         if buffer.length
-            #gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
+            return gm(buffer, 'zoomed_thumb.jpg').resize("#{zoom}%", "#{zoom}%").stream().pipe res
             #file = new magick.File(buffer)
             #[width, height] = file.dimensions().split('x')
             file = magick.identify(srcData: buffer)
@@ -353,11 +353,11 @@ router.get "/legionthumb", (req, res) ->
   comics_lister "#{contentsDir}#{candidates[Math.floor(Math.random() * candidates.length)]}", mycb
 
 router.get "/thumb", (req, res) ->
-  #res.writeHead 200, "ContentType": "image/jpeg"
+  res.writeHead 200, "ContentType": "image/jpeg"
   size =  200
   image = 'supes_logo_blue_bg.jpg'
-  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
-  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.png')
+  return thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
   fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
     #f = new magick.File(data)
     f = magick.identify(srcData: data)
@@ -371,7 +371,7 @@ router.get "/thumb", (req, res) ->
     res.end data
   
 router.get "/thumb/:image/:proportion", (req, res) ->
-  #res.writeHead 200, "ContentType": "image/jpeg"
+  res.writeHead 200, "ContentType": "image/jpeg"
   size = req.params.proportion or 100
   image = "#{req.params.image}"
   if fs.existsSync "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}.jpg"
@@ -388,8 +388,8 @@ router.get "/thumb/:image/:proportion", (req, res) ->
     image = 'supes_logo_blue_bg.jpg'
 
   console.log "Displaying thumb #{image}"
-  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
-  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), image)
+  return thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
   fs.readFile "#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}", (err, data) ->
     #f = new magick.File(data)
     f = magick.identify({srcData: data})
@@ -407,11 +407,11 @@ router.get "/supi_folder", (req, res) ->
   res.writeHead 200, "ContentType": "image/jpeg"
   image = 'superman-192x108.jpg'
   fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}").pipe res
-  #size = 10
+  size = 10
   #image = 'Superman_Folder.bmp'
   #image = 'superman-1920x1080.jpg'
-  #thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
-  #thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
+  thumb = gm(fs.createReadStream("#{__dirname}#{path.sep}public#{path.sep}img#{path.sep}#{image}"), 'thumb.ico')
+  return thumb.resize("#{size}%", "#{size}%").antialias().stream().pipe(res)
 
 router.get "/hello", (req, res) ->
  res.end 'Hello, World!, Hola, Mundo!'
