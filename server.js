@@ -411,8 +411,8 @@
     }
   });
 
-  router.get("/item", function(req, res) {
-    var at, err;
+  router.any("/item", function(req, res) {
+    var at, err, jsonData;
     try {
       at = req.get.at ? unescape(req.get.at) : '';
       return getItemAt(unescape(at), function(err, data) {
@@ -427,7 +427,9 @@
           res.writeHead(200, {
             "ContentType": "text/x-json"
           });
-          return res.end(JSON.stringify(data));
+          jsonData = JSON.stringify(data)
+          console.log('Item requested:\n', jsonData)
+          return res.end(jsonData);
         }
       });
     } catch (error) {
