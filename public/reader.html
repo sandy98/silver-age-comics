@@ -230,6 +230,25 @@
                   }
             });
 
+          $(document.body).on("click", function(ev) {
+            ev.stopPropagation = true;
+            ev.preventDefault();
+            onPageNext();
+          });  
+          
+          $(document.body).on("contextmenu", function(ev) {
+            ev.stopPropagation = true;
+            ev.preventDefault();
+            onPagePrevious()}
+          );
+
+	  $(document.body).on("mouseup", function(ev) {
+            ev.stopPropagation = true;
+            ev.preventDefault();	  
+            if (ev.button == 1) onClose()
+	  });
+	  
+	   
             (function make_pages() {
                var num = 1;
                for (num = 1; num < comic.pages; num++) {

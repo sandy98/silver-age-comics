@@ -612,14 +612,18 @@
       if (err) {
         return res.end(err.toString());
       } else {
-        visits = (parseInt(data) + 1).toString();
-        return fs.writeFile("" + __dirname + path.sep + "data" + path.sep + "visits.txt", visits, function(err) {
-          if (err) {
-            return res.end(err.message);
-          } else {
-            return res.end(visits);
-          }
-        });
+        try {
+          visits = (parseInt(data) + 1).toString();
+          return fs.writeFile("" + __dirname + path.sep + "data" + path.sep + "visits.txt", visits, function(err) {
+            if (err) {
+              return res.end(err.message);
+            } else {
+              return res.end(visits);
+            }
+          });
+        } catch(e) {
+          return res.end(e.message)
+        }
       }
     });
   });
