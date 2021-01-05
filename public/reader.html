@@ -230,14 +230,16 @@
                   }
             });
 
-          $(document.body).on("click", function(ev) {
-            ev.stopPropagation = true;
+          $("#current-page").on("click", function(ev) {
+            ev.cancelBubble = true;
+            if (ev.stopPropagation) ev.stopPropagation();
             ev.preventDefault();
             onPageNext();
           });  
           
-          $(document.body).on("contextmenu", function(ev) {
-            ev.stopPropagation = true;
+          $("#current-page").on("contextmenu", function(ev) {
+            ev.cancelBubble = true;
+            if (ev.stopPropagation) ev.stopPropagation();
             ev.preventDefault();
             onPagePrevious()}
           );
