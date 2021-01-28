@@ -13,7 +13,9 @@
     "npm": "1.2.x"
   },
   "scripts": {
-    "start": "brunch w & coffee server 8000"
+    "start": "brunch w & coffee server 8000",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "adm-zip": "~0.4.3",
@@ -33,7 +35,8 @@
     "systemd": "~0.2.4",
     "uglify-js-brunch": "> 1.6",
     "underscore": "~1.4.4",
-    "gm": "latest"
+    "gm": "latest",
+    "snyk": "^1.30.1"
   },
   "devDependencies": {
     "mocha": "0.14.0",
@@ -43,5 +46,6 @@
   "directories": {
     "test": "test"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "snyk": true
 }
