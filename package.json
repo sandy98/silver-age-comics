@@ -16,7 +16,7 @@
     "start": "brunch w & coffee server 8000"
   },
   "dependencies": {
-    "adm-zip": "~0.4.3",
+    "adm-zip": "~0.5.2",
     "async": "~0.2.8",
     "autoquit": "~0.1.4",
     "clean-css-brunch": "> 1.0 < 1.3",
